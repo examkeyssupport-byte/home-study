@@ -13,6 +13,7 @@ window.KIDS = [
       ] },
       { id: 's5', name: 'العلوم', icon: '🔬', units: [] },
       { id: 'a5', name: 'لغتي الجميلة', icon: '📖', units: [] },
+      { id: 'so5', name: 'الدراسات الاجتماعية', icon: '🌍', units: [] },
       { id: 'e5', name: 'English', icon: '🔤', units: [] },
     ],
   },
