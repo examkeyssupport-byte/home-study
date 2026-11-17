@@ -49,6 +49,11 @@ table.pv td span{opacity:0;transition:opacity .4s}
 table.pv td span.on{opacity:1}
 table.pv td.hi{background:#FFE58A;outline:4px solid #E74C3C}
 .g0{background:#FCE9C8}.g1{background:#D7F0E3}.g2{background:#D9E7FB}.g3{background:#F6D9E6}
+table.pv.gr{direction:rtl;font-size:.9em}table.pv.gr td.gc{font-size:1.1em;font-weight:600;height:auto;padding:.35em .7em}
+table.pv.gr tr.ln{opacity:0;transform:none;transition:opacity .5s}table.pv.gr tr.ln.on{opacity:1}
+.sv img.pic{max-width:100%;max-height:72%;object-fit:contain;border-radius:.4em;box-shadow:0 .2em .8em rgba(0,0,0,.15)}
+.sv.split{flex-direction:row;gap:4%}.sv.split img.pic{max-width:52%;max-height:80%}.sv.split .side{flex:1;text-align:right}.sv.split .ln{font-size:1.25em}
+.sv.split .cap{position:absolute;bottom:4%;left:0;right:0}
 .cap{font-size:1.3em;margin-top:.7em;opacity:0;transition:opacity .6s}.cap.on{opacity:1}.cap b{color:#C0392B}
 #bar{display:flex;gap:.3em;width:min(92vw,160vh);margin:.8em auto}
 #bar i{flex:1;height:.5em;border-radius:1em;background:#33476A;overflow:hidden;position:relative}
@@ -111,7 +116,7 @@ function loadLesson(id) {
   if (window.LESSONS && LESSONS[id]) return Promise.resolve(LESSONS[id]);
   if (loaded[id]) return loaded[id];
   return (loaded[id] = new Promise((ok, no) => {
-    const s = document.createElement('script'); s.src = `lessons/${id}.js`;
+    const s = document.createElement('script'); s.src = `lessons/${id}.js?v=${Date.now() / 3600000 | 0}`;
     s.onload = () => (window.LESSONS && LESSONS[id] ? ok(LESSONS[id]) : no()); s.onerror = no;
     document.head.appendChild(s);
   }));
@@ -209,6 +214,15 @@ function renderShow(sh) {
     const firstDigit = d.findIndex((c) => c !== ' ');
     const cells = d.map((c, i) => `<td class="${sh.hi != null && i - firstDigit === sh.hi ? 'hi' : ''}"><span>${c === ' ' ? '' : ar(c)}</span></td>`).join('');
     return `<div class="sv"><table class="pv n${sh.groups.length}"><tr>${head1}</tr><tr>${head2}</tr><tr>${cells}</tr></table>${sh.caption ? `<div class="cap">${ar(sh.caption)}</div>` : ''}</div>`;
+  }
+  if (sh.type === 'grid') {
+    const head = sh.head ? `<tr>${sh.head.map((h) => `<th class="g g1">${ar(h)}</th>`).join('')}</tr>` : '';
+    const rows = sh.rows.map((r) => `<tr class="ln">${r.map((c) => `<td class="gc">${ar(c)}</td>`).join('')}</tr>`).join('');
+    return `<div class="sv">${sh.title ? `<div class="head">${ar(sh.title)}</div>` : ''}<table class="pv gr">${head}${rows}</table>${sh.caption ? `<div class="cap">${ar(sh.caption)}</div>` : ''}</div>`;
+  }
+  if (sh.type === 'img') {
+    const side = (sh.lines || []).map((l) => `<div class="ln">${ar(l)}</div>`).join('');
+    return `<div class="sv ${side ? 'split' : ''}">${sh.title ? `<div class="head">${ar(sh.title)}</div>` : ''}<img class="pic" src="${sh.src}" alt="">${side ? `<div class="side">${side}</div>` : ''}${sh.caption ? `<div class="cap">${ar(sh.caption)}</div>` : ''}</div>`;
   }
   return '';
 }
@@ -334,7 +348,11 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 window.addEventListener('pagehide', stopPlayer);
-route();
+// per-subject unit lists: units/<subjectId>.js sets window.UNITS[id] = [{name, lessons:[...]}, …]
+window.UNITS = window.UNITS || {};
+const sids = KIDS.flatMap((k) => k.subjects.map((s) => s.id));
+Promise.all(sids.map((sid) => new Promise((ok) => { const s = document.createElement('script'); s.src = `units/${sid}.js?v=${Date.now() / 3600000 | 0}`; s.onload = s.onerror = ok; document.head.appendChild(s); })))
+  .then(() => { KIDS.forEach((k) => k.subjects.forEach((s) => { if (UNITS[s.id] && UNITS[s.id].length) s.units = UNITS[s.id]; })); route(); });
 })();
 </script>
 </body>
