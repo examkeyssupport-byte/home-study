@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مذاكرة عمر وعبد الرحمن</title>
+<style>
+@font-face{font-family:Plex;src:url(fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2) format('woff2');font-weight:400}
+@font-face{font-family:Plex;src:url(fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2) format('woff2');font-weight:600}
+@font-face{font-family:Plex;src:url(fonts/ibm-plex-sans-arabic-arabic-700-normal.woff2) format('woff2');font-weight:700}
+:root{--bg:#0F1B2D;--card:#1A2B45;--card2:#22385A;--ink:#F4F7FB;--mute:#9FB3CC;--gold:#FFC83D;--ok:#2ECC71;--bad:#FF5C5C;--acc:#2F80ED}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Plex,Tahoma,Arial,sans-serif}
+body{font-size:clamp(16px,1.6vw,30px);overflow-x:hidden}
+#app{min-height:100%;padding:3vh 4vw}
+h1{font-size:2.2em;margin:.2em 0 .6em}
+h2{font-size:1.5em;margin:.2em 0 .5em}
+.mute{color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,13em),1fr));gap:1.2em}
+.btn,.card{background:var(--card);color:var(--ink);border:3px solid transparent;border-radius:.8em;padding:1em 1.2em;font:inherit;cursor:pointer;text-align:right;outline:none;transition:transform .12s,border-color .12s}
+.btn:focus,.card:focus,.btn:hover,.card:hover{border-color:var(--gold);transform:scale(1.04)}
+.card .big{font-size:2.4em;display:block}
+.card b{font-size:1.3em;display:block;margin-top:.2em}
+.row{display:flex;gap:1em;align-items:center;flex-wrap:wrap}
+.top{display:flex;justify-content:space-between;align-items:center;gap:1em;flex-wrap:wrap;margin-bottom:1em}
+.lesson{display:flex;justify-content:space-between;align-items:center;width:100%;margin:.5em 0}
+.tag{font-size:.8em;padding:.2em .7em;border-radius:1em;background:var(--card2);margin-inline-start:.4em;white-space:nowrap}
+.tag.ok{background:#1E5B3A}.tag.mid{background:#6B5418}.tag.bad{background:#6B2626}
+/* player */
+body.play #app{padding:1.5vh 3vw;height:100vh;overflow:hidden}
+body.play .top{margin-bottom:.4em}body.play .top h2{font-size:1.2em;margin:0}body.play .top .btn{padding:.4em 1em}
+body.play .ctl{margin-top:.3em}body.play .ctl .btn{font-size:1em;padding:.4em 1.2em}
+#stage{position:relative;width:min(92vw,160vh);height:calc(min(92vw,160vh)*.5625);margin:0 auto;background:linear-gradient(160deg,#FFFFFF,#EAF2FF);color:#14233A;border-radius:1em;overflow:hidden;font-size:min(2.6vw,4.6vh)}
+.sv{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4% 6%;text-align:center}
+.sv .head{position:absolute;top:5%;right:5%;background:#2F80ED;color:#fff;padding:.25em 1em;border-radius:2em;font-weight:700}
+.sv .t1{font-size:2.3em;font-weight:700;color:#1B4F9C}
+.sv .t2{font-size:1.2em;color:#4A6280;margin-top:.6em}
+.ln{font-size:1.45em;margin:.35em 0;opacity:0;transform:translateY(.6em);transition:all .5s}
+.ln.on{opacity:1;transform:none}
+.ln b{color:#C0392B}.ln big{font-size:1.3em;font-weight:700;color:#1B4F9C;letter-spacing:.05em}
+u{text-decoration-color:#E74C3C;text-decoration-thickness:.12em;text-underline-offset:.15em}
+table.pv{border-collapse:collapse;direction:ltr;margin:.4em auto}
+table.pv th,table.pv td{border:2px solid #34506F;padding:.25em .45em;min-width:2.2em;text-align:center}
+table.pv th.g{font-size:1em}
+table.pv th.p{font-size:.7em;font-weight:600}
+table.pv td{font-size:1.7em;font-weight:700;height:1.6em}
+table.pv.n3{font-size:.8em}table.pv.n4{font-size:.62em}
+table.pv td span{opacity:0;transition:opacity .4s}
+table.pv td span.on{opacity:1}
+table.pv td.hi{background:#FFE58A;outline:4px solid #E74C3C}
+.g0{background:#FCE9C8}.g1{background:#D7F0E3}.g2{background:#D9E7FB}.g3{background:#F6D9E6}
+.cap{font-size:1.3em;margin-top:.7em;opacity:0;transition:opacity .6s}.cap.on{opacity:1}.cap b{color:#C0392B}
+#bar{display:flex;gap:.3em;width:min(92vw,160vh);margin:.8em auto}
+#bar i{flex:1;height:.5em;border-radius:1em;background:#33476A;overflow:hidden;position:relative}
+#bar i em{position:absolute;inset:0 0 0 auto;width:0;background:var(--gold)}
+#bar i.done em{width:100%}
+.ctl{display:flex;justify-content:center;gap:1em;margin-top:.5em}
+.ctl .btn{font-size:1.2em;padding:.5em 1.4em;text-align:center}
+.overlay{position:absolute;inset:0;background:rgba(15,27,45,.75);display:flex;align-items:center;justify-content:center}
+.overlay .btn{font-size:1.6em}
+/* quiz */
+.q{background:var(--card);border-radius:1em;padding:1.2em 1.5em;font-size:1.4em;line-height:1.7}
+.q big{font-size:1.3em;font-weight:700;color:var(--gold);letter-spacing:.05em}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.8em;margin-top:1em}
+.opts .btn{font-size:1.3em;text-align:center}
+.opts .btn.right{background:#1E7A47;border-color:var(--ok)}
+.opts .btn.wrong{background:#8A2B2B;border-color:var(--bad)}
+.why{margin-top:1em;padding:.8em 1em;border-radius:.7em;background:var(--card2);font-size:1.15em}
+.score{font-size:4em;font-weight:700;color:var(--gold)}
+table.rep{width:100%;border-collapse:collapse;font-size:.85em;margin-bottom:2em}
+table.rep th,table.rep td{border-bottom:1px solid #33476A;padding:.5em;text-align:right}
+input.pin{font:inherit;font-size:1.5em;padding:.4em;border-radius:.5em;border:3px solid var(--gold);width:6em;text-align:center;background:#0B1422;color:#fff}
+@media (max-width:640px){.opts{grid-template-columns:1fr}#app{padding:16px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="catalog.js"></script>
+<script>
+(() => {
+const $ = (s, r = document) => r.querySelector(s);
+const app = $('#app');
+const AR = '٠١٢٣٤٥٦٧٨٩';
+const ar = (s) => String(s).replace(/[0-9]/g, (d) => AR[d]);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const kidOf = (id) => KIDS.find((k) => k.id === id);
+const fmtTime = (t) => new Date(t).toLocaleString('ar-EG', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+
+// ---------- storage + report sending
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+function logEvent(ev) {
+  ev.t = Date.now();
+  const all = store.get('ks-events', []); all.push(ev); store.set('ks-events', all);
+  const q = store.get('ks-outbox', []); q.push(ev); store.set('ks-outbox', q);
+  flush();
+}
+function flush() {
+  if (!CONFIG.REPORT_URL) return;
+  const q = store.get('ks-outbox', []); if (!q.length) return;
+  fetch(CONFIG.REPORT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(q) })
+    .then(() => store.set('ks-outbox', store.get('ks-outbox', []).slice(q.length))).catch(() => {});
+}
+setInterval(flush, 60000);
+
+// ---------- lesson loading (script tags = works from a USB drive too)
+const loaded = {};
+function loadLesson(id) {
+  if (window.LESSONS && LESSONS[id]) return Promise.resolve(LESSONS[id]);
+  if (loaded[id]) return loaded[id];
+  return (loaded[id] = new Promise((ok, no) => {
+    const s = document.createElement('script'); s.src = `lessons/${id}.js`;
+    s.onload = () => (window.LESSONS && LESSONS[id] ? ok(LESSONS[id]) : no()); s.onerror = no;
+    document.head.appendChild(s);
+  }));
+}
+function lessonStats(kid, id) {
+  const ev = store.get('ks-events', []).filter((e) => e.kid === kid && e.lesson === id);
+  const w = ev.filter((e) => e.type === 'watch'); const q = ev.filter((e) => e.type === 'quiz');
+  return { watched: w.length ? Math.max(...w.map((e) => e.pct)) : null, best: q.length ? Math.max(...q.map((e) => Math.round((100 * e.score) / e.total))) : null };
+}
+
+// ---------- remote-control navigation (arrows move focus, Enter clicks)
+function focusables() { return [...document.querySelectorAll('.btn,.card,input')].filter((e) => e.offsetParent && !e.disabled); }
+document.addEventListener('keydown', (e) => {
+  const dirs = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
+  if (e.key === 'Backspace' || e.key === 'Escape' || e.keyCode === 10009 || e.keyCode === 461) {
+    if (document.activeElement && document.activeElement.tagName === 'INPUT' && e.key === 'Backspace') return;
+    e.preventDefault(); if (onBack) onBack(); return;
+  }
+  if (!dirs[e.key]) return;
+  const list = focusables(); if (!list.length) return;
+  const cur = document.activeElement;
+  if (!list.includes(cur)) { list[0].focus(); e.preventDefault(); return; }
+  const [dx, dy] = dirs[e.key]; const a = cur.getBoundingClientRect(); const ac = [a.left + a.width / 2, a.top + a.height / 2];
+  let best = null, bd = Infinity;
+  for (const el of list) {
+    if (el === cur) continue; const b = el.getBoundingClientRect(); const bc = [b.left + b.width / 2, b.top + b.height / 2];
+    const vx = bc[0] - ac[0], vy = bc[1] - ac[1]; const along = vx * dx + vy * dy; if (along <= 4) continue;
+    const d = along + 2.5 * Math.abs(vx * dy + vy * dx); if (d < bd) { bd = d; best = el; }
+  }
+  if (best) { best.focus(); best.scrollIntoView({ block: 'nearest' }); e.preventDefault(); }
+});
+let onBack = null;
+// full screen on the first press/click (browsers allow it only after a user action)
+function goFull() {
+  const d = document, el = d.documentElement;
+  if (d.fullscreenElement || d.webkitFullscreenElement) return;
+  const f = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (f) try { const r = f.call(el); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+}
+document.addEventListener('click', goFull, true);
+document.addEventListener('keydown', (e) => { if (e.key === 'Enter') goFull(); }, true);
+function focusFirst(sel) { setTimeout(() => { const el = sel ? $(sel) : focusables()[0]; if (el) el.focus(); }, 30); }
+const go = (h) => { location.hash = h; };
+
+// ---------- screens
+function home() {
+  stopPlayer(); onBack = null;
+  app.innerHTML = `<h1>أهلاً يا أبطال 👋</h1><p class="mute">مين اللي هيذاكر دلوقتي؟</p>
+  <div class="grid">${KIDS.map((k) => `<button class="card" data-k="${k.id}" style="border-inline-start:.5em solid ${k.color}"><span class="big">🎒</span><b>${k.name}</b><span class="mute">${k.grade}</span></button>`).join('')}
+  <button class="card" id="rep"><span class="big">📊</span><b>تقرير بابا</b><span class="mute">مين ذاكر إيه</span></button></div>`;
+  app.querySelectorAll('[data-k]').forEach((b) => (b.onclick = () => go(`kid/${b.dataset.k}`)));
+  $('#rep').onclick = () => go('report');
+  focusFirst();
+}
+function kidScreen(kid) {
+  const k = kidOf(kid); if (!k) return home(); stopPlayer(); onBack = () => go('');
+  app.innerHTML = `<div class="top"><h1>${k.name} — ${k.grade}</h1><button class="btn" id="back">رجوع ↩</button></div>
+  <div class="grid">${k.subjects.map((s) => { const n = s.units.reduce((a, u) => a + u.lessons.length, 0);
+    return `<button class="card" data-s="${s.id}"><span class="big">${s.icon}</span><b>${s.name}</b><span class="mute">${n ? ar(n) + ' درس' : 'قريبًا'}</span></button>`; }).join('')}</div>`;
+  $('#back').onclick = () => go('');
+  app.querySelectorAll('[data-s]').forEach((b) => (b.onclick = () => go(`subj/${kid}/${b.dataset.s}`)));
+  focusFirst('[data-s]');
+}
+async function subjScreen(kid, sid) {
+  const k = kidOf(kid); const s = k && k.subjects.find((x) => x.id === sid); if (!s) return home();
+  stopPlayer(); onBack = () => go(`kid/${kid}`);
+  const ids = s.units.flatMap((u) => u.lessons);
+  await Promise.all(ids.map((id) => loadLesson(id).catch(() => null)));
+  app.innerHTML = `<div class="top"><h1>${s.icon} ${s.name}</h1><button class="btn" id="back">رجوع ↩</button></div>
+  ${s.units.length ? '' : '<p class="mute">الدروس هتنزل هنا قريب إن شاء الله.</p>'}
+  ${s.units.map((u) => `<h2>${ar(u.name)}</h2>${u.lessons.map((id) => { const L = LESSONS[id]; if (!L) return ''; const st = lessonStats(kid, id);
+    const w = st.watched == null ? '' : `<span class="tag ${st.watched >= 90 ? 'ok' : 'mid'}">شاهد ${ar(st.watched)}٪</span>`;
+    const b = st.best == null ? '' : `<span class="tag ${st.best >= 80 ? 'ok' : st.best >= 50 ? 'mid' : 'bad'}">الاختبار ${ar(st.best)}٪</span>`;
+    return `<button class="btn lesson" data-l="${id}"><span>▶ ${ar(L.title)}</span><span>${w}${b}</span></button>`; }).join('')}`).join('')}`;
+  $('#back').onclick = () => go(`kid/${kid}`);
+  app.querySelectorAll('[data-l]').forEach((b) => (b.onclick = () => go(`lesson/${kid}/${b.dataset.l}`)));
+  focusFirst('[data-l]');
+}
+
+// ---------- player
+let P = null;
+function stopPlayer() {
+  document.body.classList.remove('play');
+  if (!P) return; const p = P; P = null;
+  p.audio.pause(); clearInterval(p.tick);
+  if (p.listened > 3) logEvent({ type: 'watch', kid: p.kid, lesson: p.id, title: p.L.title, pct: p.finished && p.listened >= 0.8 * p.total ? 100 : Math.min(100, Math.round((100 * p.listened) / (p.total || 1))), minutes: Math.round(p.listened / 6) / 10, finished: p.finished });
+}
+function renderShow(sh) {
+  if (sh.type === 'title') return `<div class="sv"><div class="t1">${ar(sh.title)}</div><div class="t2">${ar(sh.sub || '')}</div></div>`;
+  if (sh.type === 'lines') return `<div class="sv">${sh.head ? `<div class="head">${ar(sh.head)}</div>` : ''}${sh.lines.map((l) => `<div class="ln">${ar(l)}</div>`).join('')}</div>`;
+  if (sh.type === 'table') {
+    const n = sh.groups.length * 3; const d = sh.digits.padStart(n, ' ').split('');
+    const head1 = sh.groups.map((g, i) => `<th class="g g${i}" colspan="3">${g}</th>`).join('');
+    const head2 = sh.groups.map((g, i) => ['مئات', 'عشرات', 'آحاد'].map((p) => `<th class="p g${i}">${p}</th>`).join('')).join('');
+    const firstDigit = d.findIndex((c) => c !== ' ');
+    const cells = d.map((c, i) => `<td class="${sh.hi != null && i - firstDigit === sh.hi ? 'hi' : ''}"><span>${c === ' ' ? '' : ar(c)}</span></td>`).join('');
+    return `<div class="sv"><table class="pv n${sh.groups.length}"><tr>${head1}</tr><tr>${head2}</tr><tr>${cells}</tr></table>${sh.caption ? `<div class="cap">${ar(sh.caption)}</div>` : ''}</div>`;
+  }
+  return '';
+}
+async function lessonScreen(kid, id) {
+  let L; try { L = await loadLesson(id); } catch { return home(); }
+  stopPlayer(); onBack = () => history.back();
+  app.innerHTML = `<div class="top"><h2>${ar(L.title)}</h2><button class="btn" id="back">رجوع ↩</button></div>
+  <div id="stage"></div><div id="bar">${L.steps.map(() => '<i><em></em></i>').join('')}</div>
+  <div class="ctl"><button class="btn" id="prev">⏮ السابق</button><button class="btn" id="play">⏸ إيقاف</button><button class="btn" id="next">التالي ⏭</button><button class="btn" id="toquiz">📝 الاختبار</button></div>`;
+  $('#back').onclick = () => go(`subj/${kid}/${subjectOf(kid, id)}`);
+  const audio = new Audio(); audio.preload = 'auto';
+  P = { kid, id, L, audio, step: 0, listened: 0, maxReach: 0, total: 0, finished: false, durs: L.steps.map(() => 0), last: 0 };
+  // durations (for the % watched)
+  L.steps.forEach((s, i) => { const a = new Audio(); a.preload = 'metadata'; a.src = `audio/${id}/s${i + 1}.mp3`; a.onloadedmetadata = () => { if (P && P.id === id) { P.durs[i] = a.duration; P.total = P.durs.reduce((x, y) => x + y, 0); } }; });
+  const stage = $('#stage');
+  document.body.classList.add('play'); fit();
+  function show(i) {
+    P.step = i; stage.innerHTML = renderShow(L.steps[i].show) + '';
+    [...$('#bar').children].forEach((el, j) => { el.classList.toggle('done', j < i); el.firstChild.style.width = j < i ? '100%' : '0'; });
+    audio.src = `audio/${id}/s${i + 1}.mp3`; audio.play().catch((e) => { if (e && e.name === 'NotAllowedError') overlay(); });
+    $('#play').textContent = '⏸ إيقاف';
+  }
+  function overlay() {
+    if ($('.overlay', stage)) return;
+    const o = document.createElement('div'); o.className = 'overlay'; o.innerHTML = '<button class="btn" id="start">▶ ابدأ الدرس</button>'; stage.appendChild(o);
+    $('#start').onclick = () => { o.remove(); audio.play(); $('#play').textContent = '⏸ إيقاف'; focusFirst('#play'); };
+    focusFirst('#start');
+  }
+  P.tick = setInterval(() => {
+    if (!P || audio.paused) return;
+    const t = audio.currentTime, dur = audio.duration || P.durs[P.step] || 1;
+    P.listened += 0.25;
+    const before = P.durs.slice(0, P.step).reduce((x, y) => x + y, 0); P.maxReach = Math.max(P.maxReach, before + t);
+    $('#bar').children[P.step].firstChild.style.width = `${Math.min(100, (100 * t) / dur)}%`;
+    const f = t / dur; const sh = L.steps[P.step].show;
+    const lines = stage.querySelectorAll('.ln'); lines.forEach((el, k) => el.classList.toggle('on', f >= (k / Math.max(1, lines.length)) * 0.8));
+    const spans = stage.querySelectorAll('table.pv td span'); spans.forEach((el, k) => el.classList.toggle('on', f >= (k / spans.length) * 0.35));
+    const cap = $('.cap', stage); if (cap) cap.classList.toggle('on', f >= 0.4);
+  }, 250);
+  audio.onended = () => {
+    if (!P) return;
+    if (P.step < L.steps.length - 1) show(P.step + 1);
+    else { P.finished = true; P.maxReach = P.total; $('#bar').lastChild.classList.add('done');
+      stage.insertAdjacentHTML('beforeend', `<div class="overlay"><div class="row"><button class="btn" id="goquiz">📝 يلا على الاختبار</button><button class="btn" id="again">🔁 أعد الدرس</button></div></div>`);
+      $('#goquiz').onclick = () => go(`quiz/${kid}/${id}`); $('#again').onclick = () => show(0); focusFirst('#goquiz'); }
+  };
+  $('#play').onclick = () => { if (audio.paused) { audio.play(); $('#play').textContent = '⏸ إيقاف'; } else { audio.pause(); $('#play').textContent = '▶ تشغيل'; } };
+  $('#prev').onclick = () => show(Math.max(0, P.step - 1));
+  $('#next').onclick = () => show(Math.min(L.steps.length - 1, P.step + 1));
+  $('#toquiz').onclick = () => go(`quiz/${kid}/${id}`);
+  show(0); focusFirst('#play');
+}
+// lesson screen: stage = biggest 16:9 box that fits with the title + bar + buttons, no scrolling
+function fit() {
+  const st = $('#stage'); if (!st) return;
+  const used = $('.top').offsetHeight + $('#bar').offsetHeight + $('.ctl').offsetHeight + 40 + innerHeight * 0.03;
+  const w = Math.max(240, Math.min(innerWidth * 0.94, (innerHeight - used) * 16 / 9));
+  st.style.width = w + 'px'; st.style.height = w * 0.5625 + 'px'; st.style.fontSize = w / 40 + 'px';
+  $('#bar').style.width = w + 'px';
+}
+window.addEventListener('resize', fit);
+function subjectOf(kid, id) { const k = kidOf(kid); const s = k.subjects.find((s) => s.units.some((u) => u.lessons.includes(id))); return s ? s.id : ''; }
+
+// ---------- quiz
+async function quizScreen(kid, id) {
+  let L; try { L = await loadLesson(id); } catch { return home(); }
+  stopPlayer(); onBack = () => go(`subj/${kid}/${subjectOf(kid, id)}`);
+  const Q = L.quiz; let i = 0, score = 0; const wrong = [];
+  function q() {
+    const x = Q[i];
+    app.innerHTML = `<div class="top"><h2>📝 اختبار: ${ar(L.title)}</h2><span class="tag">سؤال ${ar(i + 1)} من ${ar(Q.length)}</span></div>
+    <div class="q">${ar(x.q)}</div><div class="opts">${x.o.map((o, k) => `<button class="btn" data-o="${k}">${ar(o)}</button>`).join('')}</div><div id="fb"></div>`;
+    app.querySelectorAll('[data-o]').forEach((b) => (b.onclick = () => answer(+b.dataset.o)));
+    focusFirst('[data-o]');
+  }
+  function answer(k) {
+    const x = Q[i]; const btns = app.querySelectorAll('[data-o]'); btns.forEach((b) => (b.disabled = true));
+    btns[x.a].classList.add('right');
+    if (k === x.a) { score++; $('#fb').innerHTML = `<div class="why">✅ برافو! إجابة صح.</div>`; }
+    else { btns[k].classList.add('wrong'); wrong.push(i + 1); $('#fb').innerHTML = `<div class="why">❌ الإجابة الصح: <b>${ar(x.o[x.a])}</b><br>${ar(x.why || '')}</div>`; }
+    $('#fb').insertAdjacentHTML('beforeend', `<div class="ctl"><button class="btn" id="nx">${i < Q.length - 1 ? 'السؤال التالي ⬅' : 'شوف النتيجة 🏁'}</button></div>`);
+    $('#nx').onclick = () => { i++; i < Q.length ? q() : end(); }; focusFirst('#nx');
+  }
+  function end() {
+    logEvent({ type: 'quiz', kid, lesson: id, title: L.title, score, total: Q.length, wrong });
+    const pct = Math.round((100 * score) / Q.length);
+    const msg = pct >= 90 ? 'ممتاز يا بطل! 🌟🌟🌟' : pct >= 70 ? 'شاطر! 🌟🌟 راجع الأسئلة اللي غلطت فيها' : pct >= 50 ? 'كويس 🌟 بس محتاج تعيد الدرس مرة كمان' : 'ارجع اتفرج على الدرس تاني وبعدين جرّب 💪';
+    app.innerHTML = `<div style="text-align:center"><h2>${ar(L.title)}</h2><div class="score">${ar(score)} / ${ar(Q.length)}</div><p style="font-size:1.4em">${msg}</p>
+    <div class="row" style="justify-content:center"><button class="btn" id="re">🔁 أعد الاختبار</button><button class="btn" id="rl">▶ أعد الدرس</button><button class="btn" id="bk">📚 الدروس</button></div></div>`;
+    $('#re').onclick = () => { i = 0; score = 0; wrong.length = 0; q(); };
+    $('#rl').onclick = () => go(`lesson/${kid}/${id}`);
+    $('#bk').onclick = () => go(`subj/${kid}/${subjectOf(kid, id)}`);
+    focusFirst(pct >= 70 ? '#bk' : '#rl');
+  }
+  q();
+}
+
+// ---------- father's report
+function reportScreen(ok) {
+  stopPlayer(); onBack = () => go('');
+  if (!ok && sessionStorage.getItem('ks-pin') !== '1') {
+    app.innerHTML = `<div class="top"><h1>📊 تقرير بابا</h1><button class="btn" id="back">رجوع ↩</button></div><p>اكتب الرقم السري:</p><div class="row"><input class="pin" id="pin" inputmode="numeric" maxlength="6"><button class="btn" id="okp">دخول</button></div>`;
+    $('#back').onclick = () => go('');
+    $('#okp').onclick = () => { if ($('#pin').value === CONFIG.PIN) { try { sessionStorage.setItem('ks-pin', '1'); } catch {} reportScreen(true); } else $('#pin').value = ''; };
+    $('#pin').onkeydown = (e) => { if (e.key === 'Enter') $('#okp').click(); };
+    focusFirst('#pin'); return;
+  }
+  const ev = store.get('ks-events', []).slice().reverse();
+  const today = new Date().toDateString();
+  app.innerHTML = `<div class="top"><h1>📊 تقرير بابا</h1><button class="btn" id="back">رجوع ↩</button></div>
+  ${KIDS.map((k) => { const e = ev.filter((x) => x.kid === k.id); const t = e.filter((x) => new Date(x.t).toDateString() === today);
+    const mins = t.filter((x) => x.type === 'watch').reduce((a, x) => a + (x.minutes || 0), 0);
+    return `<h2>${k.name}</h2><p class="mute">النهارده: ${ar(Math.round(mins))} دقيقة دروس، ${ar(t.filter((x) => x.type === 'quiz').length)} اختبار</p>
+    ${e.length ? `<table class="rep"><tr><th>الوقت</th><th>الدرس</th><th>النتيجة</th></tr>${e.slice(0, 60).map((x) => `<tr><td>${fmtTime(x.t)}</td><td>${ar(esc(x.title || x.lesson))}</td><td>${x.type === 'watch' ? `▶ شاهد ${ar(x.pct)}٪ (${ar(x.minutes)} د)` : `📝 ${ar(x.score)}/${ar(x.total)}${x.wrong && x.wrong.length ? ` — غلط في: ${ar(x.wrong.join('، '))}` : ''}`}</td></tr>`).join('')}</table>` : '<p class="mute">لسه مفيش حاجة.</p>'}`; }).join('')}`;
+  $('#back').onclick = () => go('');
+  focusFirst('#back');
+}
+
+function route() {
+  const [r, a, b] = location.hash.replace(/^#\/?/, '').split('/');
+  if (r === 'kid') kidScreen(a); else if (r === 'subj') subjScreen(a, b); else if (r === 'lesson') lessonScreen(a, b);
+  else if (r === 'quiz') quizScreen(a, b); else if (r === 'report') reportScreen(); else home();
+}
+window.addEventListener('hashchange', route);
+window.addEventListener('pagehide', stopPlayer);
+route();
+})();
+</script>
+</body>
+</html>
