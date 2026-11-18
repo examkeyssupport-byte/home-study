@@ -53,6 +53,10 @@ table.pv.gr{direction:rtl;font-size:.9em}table.pv.gr td.gc{font-size:1.1em;font-
 table.pv.gr tr.ln{opacity:0;transform:none;transition:opacity .5s}table.pv.gr tr.ln.on{opacity:1}
 .sv img.pic{max-width:100%;max-height:72%;object-fit:contain;border-radius:.4em;box-shadow:0 .2em .8em rgba(0,0,0,.15)}
 .sv.split{flex-direction:row;gap:4%}.sv.split img.pic{max-width:52%;max-height:80%}.sv.split .side{flex:1;text-align:right}.sv.split .ln{font-size:1.25em}
+.sv.ask .aq{font-size:1.5em;font-weight:700;margin:.6em 0}.sv.ask .aopts{display:grid;grid-template-columns:1fr 1fr;gap:.5em;width:85%}
+.sv.ask .aopt{background:#1B4F9C;color:#fff;font-size:1.15em;text-align:center;padding:.45em}.sv.ask .aopt:disabled{opacity:.6}
+.sv.ask .aopt.right{background:#1E7A47;opacity:1}.sv.ask .aopt.wrong{background:#A93226;opacity:1}.sv.ask .afb{font-size:1.2em;margin-top:.5em;min-height:1.5em;font-weight:600}
+.sv .ln.cur{color:#0B3D91}
 .sv.split .cap{position:absolute;bottom:4%;left:0;right:0}
 .cap{font-size:1.3em;margin-top:.7em;opacity:0;transition:opacity .6s}.cap.on{opacity:1}.cap b{color:#C0392B}
 #bar{display:flex;gap:.3em;width:min(92vw,160vh);margin:.8em auto}
@@ -229,7 +233,7 @@ function stopPlayer() {
   document.body.classList.remove('play');
   if (!P) return; const p = P; P = null;
   p.audio.pause(); clearInterval(p.tick);
-  if (p.listened > 3) logEvent({ type: 'watch', kid: p.kid, lesson: p.id, title: p.L.title, pct: p.finished && p.listened >= 0.8 * p.total ? 100 : Math.min(100, Math.round((100 * p.listened) / (p.total || 1))), minutes: Math.round(p.listened / 6) / 10, finished: p.finished });
+  if (p.listened > 3) logEvent({ type: 'watch', kid: p.kid, lesson: p.id, title: p.L.title, pct: p.finished && p.listened >= 0.8 * p.total ? 100 : Math.min(100, Math.round((100 * p.listened) / (p.total || 1))), minutes: Math.round(p.listened / 6) / 10, finished: p.finished, asked: p.asked, askOk: p.askOk });
 }
 function renderShow(sh) {
   if (sh.type === 'title') return `<div class="sv"><div class="t1">${ar(sh.title)}</div><div class="t2">${ar(sh.sub || '')}</div></div>`;
@@ -242,6 +246,7 @@ function renderShow(sh) {
     const cells = d.map((c, i) => `<td class="${sh.hi != null && i - firstDigit === sh.hi ? 'hi' : ''}"><span>${c === ' ' ? '' : ar(c)}</span></td>`).join('');
     return `<div class="sv"><table class="pv n${sh.groups.length}"><tr>${head1}</tr><tr>${head2}</tr><tr>${cells}</tr></table>${sh.caption ? `<div class="cap">${ar(sh.caption)}</div>` : ''}</div>`;
   }
+  if (sh.type === 'ask') return `<div class="sv ask"><div class="head">🤔 ${ar(sh.head || 'فكّر معايا')}</div><div class="aq">${ar(sh.q)}</div><div class="aopts">${sh.o.map((o, k) => `<button class="btn aopt" data-ak="${k}">${ar(o)}</button>`).join('')}</div><div class="afb"></div></div>`;
   if (sh.type === 'grid') {
     const head = sh.head ? `<tr>${sh.head.map((h) => `<th class="g g1">${ar(h)}</th>`).join('')}</tr>` : '';
     const rows = sh.rows.map((r) => `<tr class="ln">${r.map((c) => `<td class="gc">${ar(c)}</td>`).join('')}</tr>`).join('');
@@ -262,7 +267,7 @@ async function lessonScreen(kid, id) {
   <div class="ctl"><button class="btn" id="prev">⏮ السابق</button><button class="btn" id="play">⏸ إيقاف</button><button class="btn" id="next">التالي ⏭</button><button class="btn" id="toquiz">📝 الاختبار</button></div>`;
   $('#back').onclick = () => go(`subj/${kid}/${subjectOf(kid, id)}`);
   const audio = new Audio(); audio.preload = 'auto';
-  P = { kid, id, L, audio, step: 0, listened: 0, maxReach: 0, total: 0, finished: false, durs: L.steps.map(() => 0), last: 0 };
+  P = { kid, id, L, audio, step: 0, listened: 0, maxReach: 0, total: 0, finished: false, durs: L.steps.map(() => 0), last: 0, answered: {}, asked: 0, askOk: 0 };
   // durations (for the % watched)
   L.steps.forEach((s, i) => { const a = new Audio(); a.preload = 'metadata'; a.src = `audio/${id}/s${i + 1}.mp3`; a.onloadedmetadata = () => { if (P && P.id === id) { P.durs[i] = a.duration; P.total = P.durs.reduce((x, y) => x + y, 0); } }; });
   const stage = $('#stage');
@@ -288,17 +293,34 @@ async function lessonScreen(kid, id) {
     const f = t / dur; const sh = L.steps[P.step].show;
     const cue = window.CUES && CUES[id] && CUES[id][P.step + 1];
     const lines = stage.querySelectorAll('.ln');
-    lines.forEach((el, k) => el.classList.toggle('on', cue && cue.length === lines.length ? t >= cue[k] : f >= (k / Math.max(1, lines.length)) * 0.8));
+    // exact beat cues may have one more entry than lines (an intro beat before line 1) → use the last `lines.length` cues
+    const cc = cue && cue.length >= lines.length ? cue.slice(cue.length - lines.length) : null;
+    let lastOn = -1;
+    lines.forEach((el, k) => { const on = cc && cc[k] != null ? t >= cc[k] : f >= (k / Math.max(1, lines.length)) * 0.8; el.classList.toggle('on', on); if (on) lastOn = k; });
+    if (window.CUES_EXACT && CUES_EXACT[id]) lines.forEach((el, k) => el.classList.toggle('cur', k === lastOn));
     const spans = stage.querySelectorAll('table.pv td span'); spans.forEach((el, k) => el.classList.toggle('on', f >= (k / spans.length) * 0.35));
     const cap = $('.cap', stage); if (cap) cap.classList.toggle('on', f >= 0.4);
   }, 250);
   audio.onended = () => {
     if (!P) return;
+    const cur = L.steps[P.step].show;
+    if (cur.type === 'ask' && !P.answered[P.step]) { askWait(cur); return; } // stop until he answers
     if (P.step < L.steps.length - 1) show(P.step + 1);
     else { P.finished = true; P.maxReach = P.total; $('#bar').lastChild.classList.add('done');
       stage.insertAdjacentHTML('beforeend', `<div class="overlay"><div class="row"><button class="btn" id="goquiz">📝 يلا على الاختبار</button><button class="btn" id="again">🔁 أعد الدرس</button></div></div>`);
       $('#goquiz').onclick = () => go(`quiz/${kid}/${id}`); $('#again').onclick = () => show(0); focusFirst('#goquiz'); }
   };
+  function askWait(sh) {
+    const btns = stage.querySelectorAll('.aopt');
+    btns.forEach((b) => (b.onclick = () => {
+      const k = +b.dataset.ak; btns.forEach((x) => (x.disabled = true));
+      btns[sh.a].classList.add('right'); const ok = k === sh.a; if (!ok) b.classList.add('wrong');
+      P.answered[P.step] = true; P.asked++; if (ok) P.askOk++;
+      $('.afb', stage).innerHTML = ok ? '✅ برافو عليك!' : `❌ الإجابة الصح: ${ar(sh.o[sh.a])}`;
+      setTimeout(() => { if (P && P.step < L.steps.length - 1) show(P.step + 1); }, ok ? 1800 : 3200);
+    }));
+    focusFirst('.aopt');
+  }
   $('#play').onclick = () => { if (audio.paused) { audio.play(); $('#play').textContent = '⏸ إيقاف'; } else { audio.pause(); $('#play').textContent = '▶ تشغيل'; } };
   $('#prev').onclick = () => show(Math.max(0, P.step - 1));
   $('#next').onclick = () => show(Math.min(L.steps.length - 1, P.step + 1));
@@ -371,7 +393,7 @@ function reportScreen(ok) {
   ${KIDS.map((k) => { const e = ev.filter((x) => x.kid === k.id); const t = e.filter((x) => new Date(x.t).toDateString() === today);
     const mins = t.filter((x) => x.type === 'watch').reduce((a, x) => a + (x.minutes || 0), 0);
     return `<h2>${k.name}</h2><p class="mute">النهارده: ${ar(Math.round(mins))} دقيقة دروس، ${ar(t.filter((x) => x.type === 'quiz').length)} اختبار</p>
-    ${e.length ? `<table class="rep"><tr><th>الوقت</th><th>الدرس</th><th>النتيجة</th></tr>${e.slice(0, 60).map((x) => `<tr><td>${fmtTime(x.t)}</td><td>${ar(esc(x.title || x.lesson))}</td><td>${x.type === 'watch' ? `▶ شاهد ${ar(x.pct)}٪ (${ar(x.minutes)} د)` : `📝 ${ar(x.score)}/${ar(x.total)}${x.wrong && x.wrong.length ? ` — غلط في: ${ar(x.wrong.join('، '))}` : ''}`}</td></tr>`).join('')}</table>` : '<p class="mute">لسه مفيش حاجة.</p>'}`; }).join('')}`;
+    ${e.length ? `<table class="rep"><tr><th>الوقت</th><th>الدرس</th><th>النتيجة</th></tr>${e.slice(0, 60).map((x) => `<tr><td>${fmtTime(x.t)}</td><td>${ar(esc(x.title || x.lesson))}</td><td>${x.type === 'watch' ? `▶ شاهد ${ar(x.pct)}٪ (${ar(x.minutes)} د)${x.asked ? ` — أسئلة الدرس ${ar(x.askOk)}/${ar(x.asked)}` : ''}` : `📝 ${ar(x.score)}/${ar(x.total)}${x.wrong && x.wrong.length ? ` — غلط في: ${ar(x.wrong.join('، '))}` : ''}`}</td></tr>`).join('')}</table>` : '<p class="mute">لسه مفيش حاجة.</p>'}`; }).join('')}`;
   $('#back').onclick = () => go('');
   focusFirst('#back');
 }
