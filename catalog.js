@@ -15,6 +15,8 @@ window.KIDS = [
       { id: 'a5', name: 'لغتي الجميلة', icon: '📖', units: [] },
       { id: 'so5', name: 'الدراسات الاجتماعية', icon: '🌍', units: [] },
       { id: 'e5', name: 'English', icon: '🔤', units: [] },
+      { id: 'i5', name: 'الدراسات الإسلامية', icon: '🕌', units: [] },
+      { id: 'd5', name: 'المهارات الرقمية', icon: '💻', units: [] },
     ],
   },
   {
@@ -23,6 +25,7 @@ window.KIDS = [
       { id: 'm7', name: 'الرياضيات', icon: '➗', units: [] },
       { id: 's7', name: 'العلوم', icon: '🔬', units: [] },
       { id: 'a7', name: 'لغتي الخالدة', icon: '📖', units: [] },
+      { id: 'i7', name: 'الدراسات الإسلامية', icon: '🕌', units: [] },
       { id: 'so7', name: 'الدراسات الاجتماعية', icon: '🌍', units: [] },
       { id: 'd7', name: 'المهارات الرقمية', icon: '💻', units: [] },
       { id: 'e7', name: 'English', icon: '🔤', units: [] },
