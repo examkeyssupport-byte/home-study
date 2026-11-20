@@ -74,7 +74,8 @@ table.pv.gr tr.ln{opacity:0;transform:none;transition:opacity .5s}table.pv.gr tr
 .opts .btn{font-size:1.3em;text-align:center}
 .opts .btn.right{background:#1E7A47;border-color:var(--ok)}
 .opts .btn.wrong{background:#8A2B2B;border-color:var(--bad)}
-.why{margin-top:1em;padding:.8em 1em;border-radius:.7em;background:var(--card2);font-size:1.15em}
+.why{margin-top:1em;padding:.8em 1em;border-radius:.7em;background:var(--card2);font-size:1.15em;line-height:1.7}
+.why .ex{margin-top:.45em}
 .score{font-size:4em;font-weight:700;color:var(--gold)}
 table.rep{width:100%;border-collapse:collapse;font-size:.85em;margin-bottom:2em}
 table.rep th,table.rep td{border-bottom:1px solid #33476A;padding:.5em;text-align:right}
@@ -399,8 +400,14 @@ function runQuiz(kid, o) {
     const x = Q[i]; const btns = app.querySelectorAll('[data-o]'); btns.forEach((b) => (b.disabled = true));
     btns[x.a].classList.add('right');
     if (x.key) setWrong(kid, x.key, k !== x.a);
-    if (k === x.a) { score++; $('#fb').innerHTML = `<div class="why">✅ برافو! إجابة صح.</div>`; }
-    else { btns[k].classList.add('wrong'); wrong.push(i + 1); $('#fb').innerHTML = `<div class="why">❌ الإجابة الصح: <b>${ar(x.o[x.a])}</b><br>${ar(x.why || '')}</div>`; }
+    // explanation both ways: why the right answer is right, and (if wrong) why his choice is wrong (x.ow[k], optional)
+    const ex = x.why ? `<div class="ex">💡 <b>التوضيح:</b> ${ar(x.why)}</div>` : '';
+    if (k === x.a) { score++; $('#fb').innerHTML = `<div class="why">✅ برافو! إجابة صح — <b>${ar(x.o[x.a])}</b>${ex}</div>`; }
+    else {
+      btns[k].classList.add('wrong'); wrong.push(i + 1);
+      const ow = x.ow && x.ow[k] ? `<div class="ex">❌ <b>ليه «${ar(x.o[k])}» غلط؟</b> ${ar(x.ow[k])}</div>` : `<div class="ex">❌ إجابتك «${ar(x.o[k])}» غلط.</div>`;
+      $('#fb').innerHTML = `<div class="why">${ow}<div class="ex">✅ <b>الإجابة الصح: ${ar(x.o[x.a])}</b></div>${ex}</div>`;
+    }
     $('#fb').insertAdjacentHTML('beforeend', `<div class="ctl"><button class="btn" id="nx">${i < Q.length - 1 ? 'السؤال التالي ⬅' : 'شوف النتيجة 🏁'}</button></div>`);
     $('#nx').onclick = () => { i++; i < Q.length ? q() : end(); }; focusFirst('#nx');
   }
