@@ -57,6 +57,13 @@ table.pv.gr tr.ln{opacity:0;transform:none;transition:opacity .5s}table.pv.gr tr
 .sv.ask .aopt{background:#1B4F9C;color:#fff;font-size:1.15em;text-align:center;padding:.45em}.sv.ask .aopt:disabled{opacity:.6}
 .sv.ask .aopt.right{background:#1E7A47;opacity:1}.sv.ask .aopt.wrong{background:#A93226;opacity:1}.sv.ask .afb{font-size:1.2em;margin-top:.5em;min-height:1.5em;font-weight:600}
 .sv .ln.cur{color:#0B3D91}
+.sv.withpic{flex-direction:row;gap:3%;align-items:center}
+.sv.withpic .txt{flex:1.25;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%}
+.picbox{flex:1;position:relative;height:78%;align-self:center}
+.sv.withpic.g .picbox{flex:.9;height:72%}.sv.withpic.g table.pv.gr{font-size:.8em}.sv.withpic.g .txt{flex:1.4}
+.sv.withpic .head{z-index:2}.sv.withpic .txt{padding-top:9%;box-sizing:border-box}
+.picbox .lp{position:absolute;inset:0;margin:auto;max-width:100%;max-height:100%;object-fit:contain;opacity:0;transform:scale(.8) rotate(-3deg);transition:opacity .5s,transform .6s cubic-bezier(.3,1.6,.5,1);border-radius:.5em}
+.picbox .lp.on{opacity:1;transform:none}
 .sv.split .cap{position:absolute;bottom:4%;left:0;right:0}
 .cap{font-size:1.3em;margin-top:.7em;opacity:0;transition:opacity .6s}.cap.on{opacity:1}.cap b{color:#C0392B}
 #bar{display:flex;gap:.3em;width:min(92vw,160vh);margin:.8em auto}
@@ -366,7 +373,15 @@ function stopPlayer() {
   p.audio.pause(); clearInterval(p.tick);
   if (p.listened > 3) logEvent({ type: 'watch', kid: p.kid, lesson: p.id, title: p.L.title, pct: (() => { const h = p.heard ? p.heard.reduce((a, x, i) => a + Math.min(x, p.durs[i] || 0), 0) : p.listened; const r = h / (p.total || 1); return r >= 0.95 ? 100 : Math.min(100, Math.round(100 * r)); })(), minutes: Math.round(p.listened / 6) / 10, finished: p.finished, asked: p.asked, askOk: p.askOk });
 }
-function renderShow(sh) {
+// owner 11-21: pictures that appear WITH the sentence they explain. sh.pics = [src|'' per line/row] (lines + grid);
+// the panel shows the picture of the latest line that has one (synced by the same cues as the lines).
+function withPics(sh, html) {
+  if (!sh.pics || !sh.pics.some(Boolean)) return html;
+  const box = `<div class="picbox">${sh.pics.map((p, k) => `<img class="lp" data-k="${k}" data-src="${p || ''}" ${p ? `src="${p}"` : ''} alt="">`).join('')}</div>`;
+  return html.replace(/^<div class="sv">/, `<div class="sv withpic${sh.type === 'grid' ? ' g' : ''}"><div class="txt">`).replace(/<\/div>$/, `</div>${box}</div>`);
+}
+function renderShow(sh) { return withPics(sh, renderShow0(sh)); }
+function renderShow0(sh) {
   if (sh.type === 'title') return `<div class="sv"><div class="t1">${ar(sh.title)}</div><div class="t2">${ar(sh.sub || '')}</div></div>`;
   if (sh.type === 'lines') return `<div class="sv">${sh.head ? `<div class="head">${ar(sh.head)}</div>` : ''}${sh.lines.map((l) => `<div class="ln">${ar(l)}</div>`).join('')}</div>`;
   if (sh.type === 'table') {
@@ -462,6 +477,8 @@ async function lessonScreen(kid, id) {
     let lastOn = -1;
     lines.forEach((el, k) => { const on = cc && cc[k] != null ? t >= cc[k] : f >= (k / Math.max(1, lines.length)) * 0.8; el.classList.toggle('on', on); if (on) lastOn = k; });
     if (window.CUES_EXACT && CUES_EXACT[id]) lines.forEach((el, k) => el.classList.toggle('cur', k === lastOn));
+    const lps = stage.querySelectorAll('.lp');
+    if (lps.length) { let k = lastOn; while (k >= 0 && !(lps[k] && lps[k].dataset.src)) k--; if (k < 0 && lastOn < 0) k = -1; lps.forEach((p, j) => p.classList.toggle('on', j === k)); }
     const spans = stage.querySelectorAll('table.pv td span'); spans.forEach((el, k) => el.classList.toggle('on', f >= (k / spans.length) * 0.35));
     const cap = $('.cap', stage); if (cap) cap.classList.toggle('on', f >= 0.4);
   }, 250);
