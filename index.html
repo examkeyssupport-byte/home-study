@@ -139,6 +139,9 @@ function loadLesson(id) {
     document.head.appendChild(s);
   }));
 }
+// owner 11-21: tests, stars and rounds only for lessons watched COMPLETELY (≥95% of the parts heard → pct 100)
+const FULL = 95;
+function watchedFull(kid, id) { return (lessonStats(kid, id).watched || 0) >= FULL; }
 function lessonStats(kid, id) {
   const ev = store.get('ks-events', []).filter((e) => e.kid === kid && e.lesson === id);
   const w = ev.filter((e) => e.type === 'watch'); const q = ev.filter((e) => e.type === 'quiz');
@@ -215,7 +218,7 @@ async function subjScreen(kid, sid) {
   ${s.units.map((u, ui) => `<h2>${ar(u.name)}</h2>${u.lessons.map((id) => { const L = LESSONS[id]; if (!L) return ''; const st = lessonStats(kid, id);
     const w = st.watched == null ? '' : `<span class="tag ${st.watched >= 90 ? 'ok' : 'mid'}">شاهد ${ar(st.watched)}٪</span>`;
     const b = st.best == null ? '' : `<span class="tag ${st.best >= 80 ? 'ok' : st.best >= 50 ? 'mid' : 'bad'}">الاختبار ${ar(st.best)}٪</span>`;
-    const lk = roundDone && (st.watched || 0) < 80 ? '<span class="tag">🔒 بعد باقي المواد</span>' : '';
+    const lk = roundDone && !watchedFull(kid, id) ? '<span class="tag">🔒 بعد باقي المواد</span>' : '';
     return `<button class="btn lesson" data-l="${id}"><span>${lk ? '🔒' : '▶'} ${ar(L.title)}</span><span>${w}${b}${lk}</span></button>`; }).join('')}`).join('')}`;
   $('#back').onclick = () => go(`kid/${kid}`);
   app.querySelectorAll('[data-l]').forEach((b) => (b.onclick = () => go(`lesson/${kid}/${b.dataset.l}`)));
@@ -233,8 +236,9 @@ function bankUnits(s) {
   const u = (window.BANK_U || {})[s.id];
   return u && u.length ? u : s.units.map((x) => ({ name: x.name, lessons: x.lessons.map((id) => [id, LESSONS[id] ? LESSONS[id].title : id]) }));
 }
-function poolOf(sid, ids) {
+function poolOf(sid, ids, kid) {
   const B = (window.BANK || {})[sid] || {};
+  if (kid) ids = ids.filter((id) => watchedFull(kid, id));
   return ids.flatMap((id) => [...(LESSONS[id] ? LESSONS[id].quiz.map((q, i) => ({ ...q, key: `${id}#${i}` })) : []), ...(B[id] || []).map((q, i) => ({ ...q, key: `${id}#b${i}` }))]);
 }
 async function testsScreen(kid, sid) {
@@ -242,17 +246,18 @@ async function testsScreen(kid, sid) {
   stopPlayer(); onBack = () => go(`subj/${kid}/${sid}`);
   await loadBank(sid);
   await Promise.all(s.units.flatMap((u) => u.lessons).map((id) => loadLesson(id).catch(() => null)));
-  const U = bankUnits(s);
-  const cnt = (ids) => poolOf(sid, ids).length;
+  const U = bankUnits(s); const pub = new Set(s.units.flatMap((u) => u.lessons));
+  const cnt = (ids) => poolOf(sid, ids, kid).length; // only lessons watched completely
   const best = (w) => { const b = lessonStats(kid, `rev:${sid}:${w}`).best; return b == null ? '' : `<span class="tag ${b >= 80 ? 'ok' : b >= 50 ? 'mid' : 'bad'}">آخر أعلى ${ar(b)}٪</span>`; };
-  const nWrong = dueWrong(kid).filter((w) => U.some((u) => u.lessons.some((x) => x[0] === w.split('#')[0]))).length;
+  const nWrong = dueWrong(kid).filter((w) => watchedFull(kid, w.split('#')[0]) && U.some((u) => u.lessons.some((x) => x[0] === w.split('#')[0]))).length;
   const all = cnt(U.flatMap((u) => u.lessons.map((x) => x[0])));
   app.innerHTML = `<div class="top"><h1>📝 اختبارات ${s.name}</h1><button class="btn" id="back">رجوع ↩</button></div>
-  <p class="mute">كل مرة الأسئلة بتتغير — ${ar(all)} سؤال في المادة<br>⭐ النجوم والفلوس على أسئلة الدروس اللي اتفرجت على شرحها بس</p>
-  <div class="row" style="margin-bottom:.6em"><button class="btn rev" data-r="quick">⚡ اختبار سريع (١٠ أسئلة)</button><button class="btn rev" data-r="all">🏆 اختبار شامل (٣٠ سؤال)</button>${nWrong ? `<button class="btn rev" data-r="wrong">🔁 راجع أخطائي (${ar(nWrong)})</button>` : ''}</div>
-  ${U.map((u, ui) => { const ids = u.lessons.map((x) => x[0]); if (!cnt(ids)) return '';
-    return `<h2>${ar(u.name)}</h2><button class="btn lesson rev" data-r="${ui}"><span>📝 اختبار ${ar(u.name.split(':')[0])} كله (٢٠ سؤال)</span><span>${best(ui)}</span></button>
-    ${u.lessons.map(([id, t]) => cnt([id]) ? `<button class="btn lesson" data-r="L:${id}"><span>✏️ ${ar(t)}</span><span>${best('L:' + id)}<span class="tag">${ar(Math.min(15, cnt([id])))} سؤال</span></span></button>` : '').join('')}`; }).join('')}`;
+  <p class="mute">🔒 أسئلة كل درس بتتفتح بعد ما تتفرج على شرحه كامل — مفتوح دلوقتي ${ar(all)} سؤال</p>
+  ${all ? `<div class="row" style="margin-bottom:.6em"><button class="btn rev" data-r="quick">⚡ اختبار سريع (١٠ أسئلة)</button><button class="btn rev" data-r="all">🏆 اختبار شامل (٣٠ سؤال)</button>${nWrong ? `<button class="btn rev" data-r="wrong">🔁 راجع أخطائي (${ar(nWrong)})</button>` : ''}</div>` : '<p style="font-size:1.3em">▶ اتفرج على درس للآخر الأول، وأسئلته هتتفتح هنا.</p>'}
+  ${U.map((u, ui) => { const ids = u.lessons.map((x) => x[0]); const open = cnt(ids);
+    return `<h2>${ar(u.name)}</h2>${open ? `<button class="btn lesson rev" data-r="${ui}"><span>📝 اختبار ${ar(u.name.split(':')[0])} (الدروس اللي شفتها)</span><span>${best(ui)}</span></button>` : ''}
+    ${u.lessons.map(([id, t]) => cnt([id]) ? `<button class="btn lesson" data-r="L:${id}"><span>✏️ ${ar(t)}</span><span>${best('L:' + id)}<span class="tag">${ar(Math.min(15, cnt([id])))} سؤال</span></span></button>`
+      : `<div class="btn lesson" style="opacity:.45"><span>🔒 ${ar(t)}</span><span class="tag">${pub.has(id) ? 'اتفرج على الدرس كامل الأول' : 'الدرس لسه بيتسجّل'}</span></div>`).join('')}`; }).join('')}`;
   $('#back').onclick = () => go(`subj/${kid}/${sid}`);
   app.querySelectorAll('[data-r]').forEach((b) => (b.onclick = () => go(`rev/${kid}/${sid}/${b.dataset.r}`)));
   focusFirst('[data-r]');
@@ -329,6 +334,7 @@ function setWrong(kid, key, isWrong) {
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 async function reviewScreen(kid, sid, which) {
   const k = kidOf(kid); const s = k && k.subjects.find((x) => x.id === sid); if (!s) return home();
+  stopPlayer(); // logs the watch first, so a lesson just finished counts
   await loadBank(sid);
   const pub = s.units.flatMap((u) => u.lessons);
   await Promise.all(pub.map((id) => loadLesson(id).catch(() => null)));
@@ -339,7 +345,7 @@ async function reviewScreen(kid, sid, which) {
   else if (which === 'all') { ids = allIds; title = `اختبار شامل — ${s.name}`; n = 30; }
   else if (which === 'quick') { ids = allIds; title = `اختبار سريع — ${s.name}`; n = 10; }
   else { const u = U[+which]; if (!u) return go(`tests/${kid}/${sid}`); ids = u.lessons.map((x) => x[0]); title = `اختبار ${u.name}`; n = 20; }
-  let pool = poolOf(sid, ids);
+  let pool = poolOf(sid, ids, kid);
   if (which === 'wrong') { const w = new Set(wrongList(kid)); pool = pool.filter((q) => w.has(q.key)); }
   { const c = cooling(kid); pool = pool.filter((q) => !c(q.key)); } // wrong in the last 3 days → not yet
   // questions not seen for the longest time come first → every test is different
@@ -386,7 +392,7 @@ function renderShow(sh) {
 // ---------- rounds (owner 11-21: variety) — a round = one NEW lesson from every subject that still has new lessons.
 // After a new lesson in a subject, its other new lessons lock until the round is complete. Re-watching + tests stay open.
 function roundInfo(kid) {
-  const k = kidOf(kid); const ev = store.get('ks-events', []).filter((e) => e.kid === kid && e.type === 'watch' && e.pct >= 80);
+  const k = kidOf(kid); const ev = store.get('ks-events', []).filter((e) => e.kid === kid && e.type === 'watch' && e.pct >= FULL);
   const first = {}; ev.forEach((e) => { if (!(e.lesson in first) || e.t < first[e.lesson]) first[e.lesson] = e.t; });
   let start = store.get(`ks-round-${kid}`, 0);
   const calc = () => {
@@ -400,7 +406,7 @@ function roundInfo(kid) {
 }
 // a NEW lesson of a subject already done in this round is locked
 function lessonLocked(kid, id) {
-  if ((lessonStats(kid, id).watched || 0) >= 80) return false;
+  if (watchedFull(kid, id)) return false;
   const r = roundInfo(kid); return r.done.has(subjectOf(kid, id));
 }
 const subjName = (kid, sid) => (kidOf(kid).subjects.find((s) => s.id === sid) || {}).name || sid;
@@ -423,7 +429,7 @@ async function lessonScreen(kid, id) {
   const audio = new Audio(); audio.preload = 'auto';
   P = { kid, id, L, audio, step: 0, listened: 0, maxReach: 0, total: 0, finished: false, durs: L.steps.map(() => 0), heard: L.steps.map(() => 0), last: 0, answered: {}, asked: 0, askOk: 0,
     // owner 11-21: kids skipped with «التالي» → next only after the part was heard, unless the lesson was already watched before
-    free: (lessonStats(kid, id).watched || 0) >= 80 };
+    free: watchedFull(kid, id) };
   // durations (for the % watched)
   L.steps.forEach((s, i) => { const a = new Audio(); a.preload = 'metadata'; a.src = `audio/${id}/s${i + 1}.mp3`; a.onloadedmetadata = () => { if (P && P.id === id) { P.durs[i] = a.duration; P.total = P.durs.reduce((x, y) => x + y, 0); } }; });
   const stage = $('#stage');
@@ -507,6 +513,12 @@ function subjectOf(kid, id) { const k = kidOf(kid); const s = k.subjects.find((s
 // ---------- quiz
 async function quizScreen(kid, id) {
   let L; try { L = await loadLesson(id); } catch { return home(); }
+  stopPlayer(); // logs the watch first
+  if (!watchedFull(kid, id)) {
+    onBack = () => go(`subj/${kid}/${subjectOf(kid, id)}`);
+    app.innerHTML = `<div style="text-align:center"><h2>${ar(L.title)}</h2><p style="font-size:1.4em">🔒 أسئلة الدرس ده بتتفتح بعد ما تتفرج على الشرح كامل للآخر.</p><div class="row" style="justify-content:center"><button class="btn" id="rl">▶ اتفرج على الدرس</button><button class="btn" id="bk">📚 الدروس</button></div></div>`;
+    $('#rl').onclick = () => go(`lesson/${kid}/${id}`); $('#bk').onclick = () => go(`subj/${kid}/${subjectOf(kid, id)}`); focusFirst('#rl'); return;
+  }
   const c = cooling(kid); const qs = L.quiz.map((q, i) => ({ ...q, key: `${id}#${i}` })).filter((q) => !c(q.key));
   if (!qs.length) { stopPlayer(); onBack = () => go(`subj/${kid}/${subjectOf(kid, id)}`); app.innerHTML = `<div style="text-align:center"><h2>${ar(L.title)}</h2><p style="font-size:1.4em">⏳ الأسئلة اللي غلطت فيها في الدرس ده هترجعلك بعد ٣ أيام عشان تراجعها.<br>جرّب «📝 اختبارات» المادة دلوقتي.</p><button class="btn" id="bk">📚 الدروس</button></div>`; $('#bk').onclick = () => go(`subj/${kid}/${subjectOf(kid, id)}`); focusFirst('#bk'); return; }
   runQuiz(kid, { title: L.title, qs, lesson: id, again: () => quizScreen(kid, id), back: `subj/${kid}/${subjectOf(kid, id)}`, replay: `lesson/${kid}/${id}` });
@@ -531,7 +543,7 @@ function runQuiz(kid, o) {
     let starTxt = '';
     if (k === x.a) {
       // owner 11-21: stars/money only for questions of a lesson he has WATCHED (≥ 80% of its video)
-      const lid = (x.key || `${id}#${i}`).split('#')[0]; const seenL = (lessonStats(kid, lid).watched || 0) >= 80;
+      const lid = (x.key || `${id}#${i}`).split('#')[0]; const seenL = watchedFull(kid, lid);
       const got = seenL ? giveStars(kid, 1, x.key || `${id}#${i}`) : 0; stars += got;
       if (wasWrong) { const w = wallet(kid); w.fixed = (w.fixed || 0) + 1; store.set(`ks-wallet-${kid}`, w); }
       if (got) {
@@ -545,7 +557,7 @@ function runQuiz(kid, o) {
       combo = 0;
       // the minus star applies where stars count (lessons he has watched)
       const lid = (x.key || `${id}#${i}`).split('#')[0];
-      if ((lessonStats(kid, lid).watched || 0) >= 80 && takeStar(kid)) { stars--; popStar('❌ −١ ⭐'); starTxt = ' <span class="tag bad">−١ ⭐</span>'; }
+      if (watchedFull(kid, lid) && takeStar(kid)) { stars--; popStar('❌ −١ ⭐'); starTxt = ' <span class="tag bad">−١ ⭐</span>'; }
     }
     // explanation both ways: why the right answer is right, and (if wrong) why his choice is wrong (x.ow[k], optional)
     const ex = x.why ? `<div class="ex">💡 <b>التوضيح:</b> ${ar(x.why)}</div>` : '';
