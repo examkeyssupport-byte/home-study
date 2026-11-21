@@ -428,6 +428,9 @@ async function lessonScreen(kid, id) {
     if (cur.type === 'ask' && !P.answered[P.step]) { askWait(cur); return; } // stop until he answers
     if (P.step < L.steps.length - 1) show(P.step + 1);
     else { P.finished = true; P.maxReach = P.total; $('#bar').lastChild.classList.add('done');
+      // owner 11-21: re-watching (to the end, no skipping = ≥95% heard) a lesson he has mistakes in → +2 ⭐ (once per 3 days per lesson)
+      const cov = P.heard.reduce((a, x, i) => a + Math.min(x, P.durs[i] || 0), 0) / (P.total || 1);
+      if (cov >= 0.95 && wrongList(kid).some((k) => k.startsWith(`${id}#`)) && giveStars(kid, 2, `rewatch:${id}`)) popStar('🎬 راجعت الدرس اللي غلطت فيه: +٢ ⭐');
       stage.insertAdjacentHTML('beforeend', `<div class="overlay"><div class="row"><button class="btn" id="goquiz">📝 يلا على الاختبار</button><button class="btn" id="again">🔁 أعد الدرس</button></div></div>`);
       $('#goquiz').onclick = () => go(`quiz/${kid}/${id}`); $('#again').onclick = () => show(0); focusFirst('#goquiz'); }
   };
