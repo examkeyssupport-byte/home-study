@@ -205,7 +205,7 @@ async function subjScreen(kid, sid) {
   stopPlayer(); onBack = () => go(`kid/${kid}`);
   const ids = s.units.flatMap((u) => u.lessons);
   await Promise.all(ids.map((id) => loadLesson(id).catch(() => null)));
-  const nWrong = wrongList(kid).filter((w) => ids.includes(w.split('#')[0])).length;
+  const nWrong = dueWrong(kid).filter((w) => ids.includes(w.split('#')[0])).length;
   app.innerHTML = `<div class="top"><h1>${s.icon} ${s.name}</h1><button class="btn" id="back">رجوع ↩</button></div>
   ${s.units.length ? '' : '<p class="mute">الدروس هتنزل هنا قريب إن شاء الله.</p>'}
   <div class="row" style="margin-bottom:.6em"><button class="btn rev" id="tests">📝 اختبارات ${s.name} (كل الفصول)</button>${nWrong ? `<button class="btn rev" data-r="wrong">🔁 راجع أخطائي (${ar(nWrong)})</button>` : ''}</div>
@@ -241,7 +241,7 @@ async function testsScreen(kid, sid) {
   const U = bankUnits(s);
   const cnt = (ids) => poolOf(sid, ids).length;
   const best = (w) => { const b = lessonStats(kid, `rev:${sid}:${w}`).best; return b == null ? '' : `<span class="tag ${b >= 80 ? 'ok' : b >= 50 ? 'mid' : 'bad'}">آخر أعلى ${ar(b)}٪</span>`; };
-  const nWrong = wrongList(kid).filter((w) => U.some((u) => u.lessons.some((x) => x[0] === w.split('#')[0]))).length;
+  const nWrong = dueWrong(kid).filter((w) => U.some((u) => u.lessons.some((x) => x[0] === w.split('#')[0]))).length;
   const all = cnt(U.flatMap((u) => u.lessons.map((x) => x[0])));
   app.innerHTML = `<div class="top"><h1>📝 اختبارات ${s.name}</h1><button class="btn" id="back">رجوع ↩</button></div>
   <p class="mute">كل مرة الأسئلة بتتغير — ${ar(all)} سؤال في المادة<br>⭐ النجوم والفلوس على أسئلة الدروس اللي اتفرجت على شرحها بس</p>
@@ -310,8 +310,12 @@ function walletHTML(kid, full) {
   ${full ? `<div class="badges">${BADGES.map(([id, n]) => `<span class="${w.badges.includes(id) ? '' : 'off'}">${n}</span>`).join('')}</div>` : ''}</div>`;
 }
 function wrongList(kid) { return store.get(`ks-wrong-${kid}`, []); }
+// owner 11-21: a question answered wrong comes back only after 3 days (spaced review), in every test and in «راجع أخطائي»
+function cooling(kid) { const t = store.get(`ks-wrongat-${kid}`, {}); const now = Date.now(); return (key) => t[key] && now - t[key] < REW.again; }
+function dueWrong(kid) { const c = cooling(kid); return wrongList(kid).filter((k) => !c(k)); }
 function setWrong(kid, key, isWrong) {
   const s = new Set(wrongList(kid)); if (isWrong) s.add(key); else s.delete(key); store.set(`ks-wrong-${kid}`, [...s]);
+  if (isWrong) { const t = store.get(`ks-wrongat-${kid}`, {}); t[key] = Date.now(); store.set(`ks-wrongat-${kid}`, t); }
 }
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 async function reviewScreen(kid, sid, which) {
@@ -328,6 +332,7 @@ async function reviewScreen(kid, sid, which) {
   else { const u = U[+which]; if (!u) return go(`tests/${kid}/${sid}`); ids = u.lessons.map((x) => x[0]); title = `اختبار ${u.name}`; n = 20; }
   let pool = poolOf(sid, ids);
   if (which === 'wrong') { const w = new Set(wrongList(kid)); pool = pool.filter((q) => w.has(q.key)); }
+  { const c = cooling(kid); pool = pool.filter((q) => !c(q.key)); } // wrong in the last 3 days → not yet
   // questions not seen for the longest time come first → every test is different
   const seen = store.get(`ks-seen-${kid}`, {});
   const byL = {}; shuffle(pool).sort((a, b) => (seen[a.key] || 0) - (seen[b.key] || 0)).forEach((q) => (byL[q.key.split('#')[0]] = byL[q.key.split('#')[0]] || []).push(q));
@@ -461,7 +466,9 @@ function subjectOf(kid, id) { const k = kidOf(kid); const s = k.subjects.find((s
 // ---------- quiz
 async function quizScreen(kid, id) {
   let L; try { L = await loadLesson(id); } catch { return home(); }
-  runQuiz(kid, { title: L.title, qs: L.quiz.map((q, i) => ({ ...q, key: `${id}#${i}` })), lesson: id, back: `subj/${kid}/${subjectOf(kid, id)}`, replay: `lesson/${kid}/${id}` });
+  const c = cooling(kid); const qs = L.quiz.map((q, i) => ({ ...q, key: `${id}#${i}` })).filter((q) => !c(q.key));
+  if (!qs.length) { stopPlayer(); onBack = () => go(`subj/${kid}/${subjectOf(kid, id)}`); app.innerHTML = `<div style="text-align:center"><h2>${ar(L.title)}</h2><p style="font-size:1.4em">⏳ الأسئلة اللي غلطت فيها في الدرس ده هترجعلك بعد ٣ أيام عشان تراجعها.<br>جرّب «📝 اختبارات» المادة دلوقتي.</p><button class="btn" id="bk">📚 الدروس</button></div>`; $('#bk').onclick = () => go(`subj/${kid}/${subjectOf(kid, id)}`); focusFirst('#bk'); return; }
+  runQuiz(kid, { title: L.title, qs, lesson: id, again: () => quizScreen(kid, id), back: `subj/${kid}/${subjectOf(kid, id)}`, replay: `lesson/${kid}/${id}` });
 }
 function runQuiz(kid, o) {
   stopPlayer(); onBack = () => go(o.back);
