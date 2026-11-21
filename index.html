@@ -281,6 +281,11 @@ function giveStars(kid, n, key) {
   if (levelOf(w.all).i > before) setTimeout(() => party(`🎉 مستوى جديد!`, `بقيت <b>${levelOf(w.all).name}</b>`), 400);
   return n;
 }
+// owner 11-21: a wrong answer costs 1 ⭐ (from stars, this week and the unpaid money; never below 0) → guessing does not pay
+function takeStar(kid) {
+  const w = wallet(kid); if (w.all <= 0) return 0;
+  w.all--; w.week = Math.max(0, w.week - 1); w.unpaid = Math.max(0, w.unpaid - 1); store.set(`ks-wallet-${kid}`, w); return 1;
+}
 function earnBadge(kid, id) {
   const w = wallet(kid); if (w.badges.includes(id)) return; w.badges.push(id); store.set(`ks-wallet-${kid}`, w);
   const b = BADGES.find((x) => x[0] === id); if (b) setTimeout(() => party('🎖️ وسام جديد!', b[1]), 900);
@@ -503,14 +508,19 @@ function runQuiz(kid, o) {
         if (combo >= 15) earnBadge(kid, 'combo15');
       } else if (!seenL) starTxt = ` <span class="tag mid">⭐ النجوم بعد ما تتفرج على شرح الدرس ده</span>`;
       else starTxt = ` <span class="tag">حليته قريب — نجمته جاية بعد ٣ أيام</span>`;
-    } else combo = 0;
+    } else {
+      combo = 0;
+      // the minus star applies where stars count (lessons he has watched)
+      const lid = (x.key || `${id}#${i}`).split('#')[0];
+      if ((lessonStats(kid, lid).watched || 0) >= 80 && takeStar(kid)) { stars--; popStar('❌ −١ ⭐'); starTxt = ' <span class="tag bad">−١ ⭐</span>'; }
+    }
     // explanation both ways: why the right answer is right, and (if wrong) why his choice is wrong (x.ow[k], optional)
     const ex = x.why ? `<div class="ex">💡 <b>التوضيح:</b> ${ar(x.why)}</div>` : '';
     if (k === x.a) { score++; $('#fb').innerHTML = `<div class="why">✅ برافو! إجابة صح — <b>${ar(x.o[x.a])}</b>${starTxt}${ex}</div>`; }
     else {
       btns[k].classList.add('wrong'); wrong.push(i + 1);
       const ow = x.ow && x.ow[k] ? `<div class="ex">❌ <b>ليه «${ar(x.o[k])}» غلط؟</b> ${ar(x.ow[k])}</div>` : `<div class="ex">❌ إجابتك «${ar(x.o[k])}» غلط.</div>`;
-      $('#fb').innerHTML = `<div class="why">${ow}<div class="ex">✅ <b>الإجابة الصح: ${ar(x.o[x.a])}</b></div>${ex}</div>`;
+      $('#fb').innerHTML = `<div class="why">${ow}<div class="ex">✅ <b>الإجابة الصح: ${ar(x.o[x.a])}</b>${starTxt}</div>${ex}</div>`;
     }
     $('#fb').insertAdjacentHTML('beforeend', `<div class="ctl"><button class="btn" id="nx">${i < Q.length - 1 ? 'السؤال التالي ⬅' : 'شوف النتيجة 🏁'}</button></div>`);
     $('#nx').onclick = () => { i++; i < Q.length ? q() : end(); }; focusFirst('#nx');
