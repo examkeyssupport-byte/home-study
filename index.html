@@ -244,7 +244,7 @@ async function testsScreen(kid, sid) {
   const nWrong = wrongList(kid).filter((w) => U.some((u) => u.lessons.some((x) => x[0] === w.split('#')[0]))).length;
   const all = cnt(U.flatMap((u) => u.lessons.map((x) => x[0])));
   app.innerHTML = `<div class="top"><h1>📝 اختبارات ${s.name}</h1><button class="btn" id="back">رجوع ↩</button></div>
-  <p class="mute">كل مرة الأسئلة بتتغير — ${ar(all)} سؤال في المادة</p>
+  <p class="mute">كل مرة الأسئلة بتتغير — ${ar(all)} سؤال في المادة<br>⭐ النجوم والفلوس على أسئلة الدروس اللي اتفرجت على شرحها بس</p>
   <div class="row" style="margin-bottom:.6em"><button class="btn rev" data-r="quick">⚡ اختبار سريع (١٠ أسئلة)</button><button class="btn rev" data-r="all">🏆 اختبار شامل (٣٠ سؤال)</button>${nWrong ? `<button class="btn rev" data-r="wrong">🔁 راجع أخطائي (${ar(nWrong)})</button>` : ''}</div>
   ${U.map((u, ui) => { const ids = u.lessons.map((x) => x[0]); if (!cnt(ids)) return '';
     return `<h2>${ar(u.name)}</h2><button class="btn lesson rev" data-r="${ui}"><span>📝 اختبار ${ar(u.name.split(':')[0])} كله (٢٠ سؤال)</span><span>${best(ui)}</span></button>
@@ -473,14 +473,17 @@ function runQuiz(kid, o) {
     // rewards: 1 ⭐ (once per question every 3 days); combo counts only starred answers; a wrong answer resets it
     let starTxt = '';
     if (k === x.a) {
-      const got = giveStars(kid, 1, x.key || `${id}#${i}`); stars += got;
+      // owner 11-21: stars/money only for questions of a lesson he has WATCHED (≥ 80% of its video)
+      const lid = (x.key || `${id}#${i}`).split('#')[0]; const seenL = (lessonStats(kid, lid).watched || 0) >= 80;
+      const got = seenL ? giveStars(kid, 1, x.key || `${id}#${i}`) : 0; stars += got;
       if (wasWrong) { const w = wallet(kid); w.fixed = (w.fixed || 0) + 1; store.set(`ks-wallet-${kid}`, w); }
       if (got) {
         combo++; fresh++; bestCombo = Math.max(bestCombo, combo); chime(false);
         if (combo % REW.combo === 0) { stars += giveStars(kid, REW.comboBonus); popStar(`🔥 كومبو ${ar(combo)}! +${ar(REW.comboBonus)} ⭐`); starTxt = ` <span class="tag ok">⭐ +١ و🔥 كومبو +${ar(REW.comboBonus)}</span>`; }
         else { popStar('⭐ +١'); starTxt = ` <span class="tag ok">⭐ +١${combo > 1 ? ` — 🔥 ${ar(combo)} ورا بعض` : ''}</span>`; }
         if (combo >= 15) earnBadge(kid, 'combo15');
-      } else starTxt = ` <span class="tag">حليته قريب — نجمته جاية بعد ٣ أيام</span>`;
+      } else if (!seenL) starTxt = ` <span class="tag mid">⭐ النجوم بعد ما تتفرج على شرح الدرس ده</span>`;
+      else starTxt = ` <span class="tag">حليته قريب — نجمته جاية بعد ٣ أيام</span>`;
     } else combo = 0;
     // explanation both ways: why the right answer is right, and (if wrong) why his choice is wrong (x.ow[k], optional)
     const ex = x.why ? `<div class="ex">💡 <b>التوضيح:</b> ${ar(x.why)}</div>` : '';
