@@ -344,7 +344,7 @@ function stopPlayer() {
   document.body.classList.remove('play');
   if (!P) return; const p = P; P = null;
   p.audio.pause(); clearInterval(p.tick);
-  if (p.listened > 3) logEvent({ type: 'watch', kid: p.kid, lesson: p.id, title: p.L.title, pct: p.finished && p.listened >= 0.8 * p.total ? 100 : Math.min(100, Math.round((100 * p.listened) / (p.total || 1))), minutes: Math.round(p.listened / 6) / 10, finished: p.finished, asked: p.asked, askOk: p.askOk });
+  if (p.listened > 3) logEvent({ type: 'watch', kid: p.kid, lesson: p.id, title: p.L.title, pct: (() => { const h = p.heard ? p.heard.reduce((a, x, i) => a + Math.min(x, p.durs[i] || 0), 0) : p.listened; const r = h / (p.total || 1); return r >= 0.95 ? 100 : Math.min(100, Math.round(100 * r)); })(), minutes: Math.round(p.listened / 6) / 10, finished: p.finished, asked: p.asked, askOk: p.askOk });
 }
 function renderShow(sh) {
   if (sh.type === 'title') return `<div class="sv"><div class="t1">${ar(sh.title)}</div><div class="t2">${ar(sh.sub || '')}</div></div>`;
@@ -378,7 +378,9 @@ async function lessonScreen(kid, id) {
   <div class="ctl"><button class="btn" id="prev">⏮ السابق</button><button class="btn" id="play">⏸ إيقاف</button><button class="btn" id="next">التالي ⏭</button><button class="btn" id="toquiz">📝 الاختبار</button></div>`;
   $('#back').onclick = () => go(`subj/${kid}/${subjectOf(kid, id)}`);
   const audio = new Audio(); audio.preload = 'auto';
-  P = { kid, id, L, audio, step: 0, listened: 0, maxReach: 0, total: 0, finished: false, durs: L.steps.map(() => 0), last: 0, answered: {}, asked: 0, askOk: 0 };
+  P = { kid, id, L, audio, step: 0, listened: 0, maxReach: 0, total: 0, finished: false, durs: L.steps.map(() => 0), heard: L.steps.map(() => 0), last: 0, answered: {}, asked: 0, askOk: 0,
+    // owner 11-21: kids skipped with «التالي» → next only after the part was heard, unless the lesson was already watched before
+    free: (lessonStats(kid, id).watched || 0) >= 80 };
   // durations (for the % watched)
   L.steps.forEach((s, i) => { const a = new Audio(); a.preload = 'metadata'; a.src = `audio/${id}/s${i + 1}.mp3`; a.onloadedmetadata = () => { if (P && P.id === id) { P.durs[i] = a.duration; P.total = P.durs.reduce((x, y) => x + y, 0); } }; });
   const stage = $('#stage');
@@ -399,6 +401,8 @@ async function lessonScreen(kid, id) {
     if (!P || audio.paused) return;
     const t = audio.currentTime, dur = audio.duration || P.durs[P.step] || 1;
     P.listened += 0.25;
+    // heard time per part, only while playing at the right place (no credit for leaving one part on repeat)
+    if (t > P.heard[P.step] - 1 && t <= P.heard[P.step] + 1.5) P.heard[P.step] = Math.max(P.heard[P.step], t);
     const before = P.durs.slice(0, P.step).reduce((x, y) => x + y, 0); P.maxReach = Math.max(P.maxReach, before + t);
     $('#bar').children[P.step].firstChild.style.width = `${Math.min(100, (100 * t) / dur)}%`;
     const f = t / dur; const sh = L.steps[P.step].show;
@@ -414,6 +418,7 @@ async function lessonScreen(kid, id) {
   }, 250);
   audio.onended = () => {
     if (!P) return;
+    if (P.heard[P.step] >= (audio.duration || P.durs[P.step] || 1) * 0.85) P.heard[P.step] = audio.duration || P.durs[P.step];
     const cur = L.steps[P.step].show;
     if (cur.type === 'ask' && !P.answered[P.step]) { askWait(cur); return; } // stop until he answers
     if (P.step < L.steps.length - 1) show(P.step + 1);
@@ -434,7 +439,11 @@ async function lessonScreen(kid, id) {
   }
   $('#play').onclick = () => { if (audio.paused) { audio.play(); $('#play').textContent = '⏸ إيقاف'; } else { audio.pause(); $('#play').textContent = '▶ تشغيل'; } };
   $('#prev').onclick = () => show(Math.max(0, P.step - 1));
-  $('#next').onclick = () => show(Math.min(L.steps.length - 1, P.step + 1));
+  $('#next').onclick = () => {
+    const d = audio.duration || P.durs[P.step] || 1;
+    if (!P.free && P.heard[P.step] < d * 0.85 && !(L.steps[P.step].show.type === 'ask' && P.answered[P.step])) { popStar('🎧 اسمع الشرح الأول'); return; }
+    show(Math.min(L.steps.length - 1, P.step + 1));
+  };
   $('#toquiz').onclick = () => go(`quiz/${kid}/${id}`);
   show(0); focusFirst('#play');
 }
