@@ -11,7 +11,7 @@ window.LESSONS['e5-0-2'] = {
     },
     {
       say: 'نبدأ بـ How many. دي بنسأل بيها عن العدد، يعني كام؟ || بعد How many بنحط اسم جمع، زي classes أو books. || مثلاً: How many classes do you have on Wednesdays؟ يعني كام حصة عندك يوم الأربع؟ || والإجابة: I have five classes. يعني عندي خمس حصص.',
-      show: { type: 'lines', head: 'How many + plural noun', lines: ['<b>How many</b> = كام؟ (عدد)', 'How many <b>classes</b> / <b>books</b>…', '<b>How many</b> classes do you have on Wednesdays?', 'I have <b>five</b> classes.'] },
+      show: { type: 'lines', pics: ['', 'pics/books.png', '', ''], head: 'How many + plural noun', lines: ['<b>How many</b> = كام؟ (عدد)', 'How many <b>classes</b> / <b>books</b>…', '<b>How many</b> classes do you have on Wednesdays?', 'I have <b>five</b> classes.'] },
     },
     {
       say: 'دورك. اختار الكلمة الصح للسؤال ده. اختار الإجابة بالريموت.',
@@ -19,11 +19,11 @@ window.LESSONS['e5-0-2'] = {
     },
     {
       say: 'الإجابة How many. || ليه؟ لأننا بنسأل عن عدد الطلاب. || والطلاب اسم جمع، وهو students. كل ما تسمع عدد وجمع، قول How many.',
-      show: { type: 'lines', head: 'Answer', lines: ['<b>How many</b> students are in your class?', 'عدد الطلاب ← How many', 'students = جمع'] },
+      show: { type: 'lines', pics: ['pics/students.png', '', 'pics/students.png'], head: 'Answer', lines: ['<b>How many</b> students are in your class?', 'عدد الطلاب ← How many', 'students = جمع'] },
     },
     {
       say: 'دلوقتي How long. دي بنسأل بيها عن المدة، يعني كام ساعة أو كام دقيقة. || How long is the English lesson؟ يعني الحصة بتاخد قد إيه؟ || والإجابة: It is forty-five minutes. يعني خمسة وأربعين دقيقة. || وكمان: How long does it take to get there؟ يعني الوصول هناك بياخد قد إيه؟ || والإجابة: About two minutes. يعني حوالي دقيقتين.',
-      show: { type: 'lines', head: 'How long = المدة', lines: ['<b>How long</b> is the English lesson?', 'It is forty-five minutes.', '<b>How long</b> does it take to get there?', 'About two minutes.'] },
+      show: { type: 'lines', pics: ['pics/stopwatch.png', '', '', ''], head: 'How long = المدة', lines: ['<b>How long</b> is the English lesson?', 'It is forty-five minutes.', '<b>How long</b> does it take to get there?', 'About two minutes.'] },
     },
     {
       say: 'خلينا نفرّق بينهم بشكل واضح. || How many بنسأل بيها عن عدد الحاجات، زي How many books. || وHow long بنسأل بيها عن المدة الزمنية، زي How long is the break.',
@@ -35,11 +35,11 @@ window.LESSONS['e5-0-2'] = {
     },
     {
       say: 'الإجابة long. || لأن الإجابة twenty minutes، يعني عشرين دقيقة، وده وقت. || وسؤال الوقت بنقول فيه How long.',
-      show: { type: 'lines', head: 'Answer', lines: ['How <b>long</b> is the break?', 'twenty minutes = مدة', 'مدة ← How long'] },
+      show: { type: 'lines', pics: ['pics/stopwatch.png', '', ''], head: 'Answer', lines: ['How <b>long</b> is the break?', 'twenty minutes = مدة', 'مدة ← How long'] },
     },
     {
       say: 'ندخل على الماضي البسيط، Simple Past. بنستخدمه للحاجة اللي حصلت وخلصت. || زي كلمة yesterday، يعني إمبارح. || الأفعال العادية بنزود عليها ed. مثلاً play بتبقى played. || I played football yesterday. يعني لعبت كورة إمبارح.',
-      show: { type: 'lines', head: 'Simple Past', lines: ['حدث حصل وخلص ← <b>Past</b>', 'yesterday = إمبارح', 'play → play<b>ed</b>', 'I <b>played</b> football yesterday.'] },
+      show: { type: 'lines', pics: ['', 'pics/calendar.png', 'pics/soccer.png', ''], head: 'Simple Past', lines: ['حدث حصل وخلص ← <b>Past</b>', 'yesterday = إمبارح', 'play → play<b>ed</b>', 'I <b>played</b> football yesterday.'] },
     },
     {
       say: 'وفيه أفعال شاذة. دي مابنزودش عليها ed، دي بتغيّر شكلها خالص. لازم تحفظها. || go بتبقى went. || have بتبقى had. || do بتبقى did. وفي الجملة نقول: I went to school. يعني رحت المدرسة.',
@@ -51,11 +51,11 @@ window.LESSONS['e5-0-2'] = {
     },
     {
       say: 'آخر حاجة: أعلى درجة، اللي اسمها Superlative. بنستخدمها لما نقارن حاجة بكل الباقي. || مثلاً tall بتبقى the tallest، يعني الأطول. || يعني ناخد الكلمة القصيرة ونزود عليها est. || وفي الأول نحط the.',
-      show: { type: 'lines', head: 'Superlatives', lines: ['نقارن واحد بالباقي كلهم', 'tall → <b>the tallest</b>', 'كلمة قصيرة + <b>est</b>', 'ونحط <b>the</b> قبلها'] },
+      show: { type: 'lines', pics: ['', 'pics/giraffe.png', '', ''], head: 'Superlatives', lines: ['نقارن واحد بالباقي كلهم', 'tall → <b>the tallest</b>', 'كلمة قصيرة + <b>est</b>', 'ونحط <b>the</b> قبلها'] },
     },
     {
       say: 'خلينا نشوف أمثلة تانية. || big بتبقى the biggest. لاحظ إننا كررنا الحرف الأخير g. || easy بتبقى the easiest. الـ y بتتحول i. || funny بتبقى the funniest. برضه الـ y بتتحول i. || أما الكلمات الطويلة زي difficult فبنقول the most difficult. ما بنزودش est.',
-      show: { type: 'grid', title: 'Superlatives', head: ['Word', 'Superlative'], rows: [['big', 'the biggest'], ['easy', 'the easiest'], ['funny', 'the funniest'], ['difficult', 'the most difficult']], caption: 'كلمة قصيرة: est — كلمة طويلة: the most' },
+      show: { type: 'grid', pics: ['pics/elephant.png', 'pics/relieved.png', 'pics/laugh.png', 'pics/confounded.png'], title: 'Superlatives', head: ['Word', 'Superlative'], rows: [['big', 'the biggest'], ['easy', 'the easiest'], ['funny', 'the funniest'], ['difficult', 'the most difficult']], caption: 'كلمة قصيرة: est — كلمة طويلة: the most' },
     },
     {
       say: 'آخر سؤال قبل الاختبار. اختار الشكل الصح.',
@@ -63,7 +63,7 @@ window.LESSONS['e5-0-2'] = {
     },
     {
       say: 'الإجابة funniest. || funny كلمة قصيرة، فنزود عليها est. || بس الـ y بتتحول i، فتبقى funniest. || ومانسيناش the في الأول: the funniest.',
-      show: { type: 'lines', head: 'Answer', lines: ['funny + est', 'y → i', '<b>the funniest</b> boy'] },
+      show: { type: 'lines', pics: ['pics/laugh.png', '', 'pics/boy.png'], head: 'Answer', lines: ['funny + est', 'y → i', '<b>the funniest</b> boy'] },
     },
     {
       say: 'نلخّص الدرس. || How many للعدد، وHow long للمدة. || الماضي البسيط للحاجة اللي خلصت، وبنزود ed أو نستخدم فعل شاذ زي went. || والنفي didn\'t وبعدها الفعل الأصلي. || وأعلى درجة: the tallest وthe biggest وthe most difficult. برافو عليك! يلا بينا على الاختبار.',

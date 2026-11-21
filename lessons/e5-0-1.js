@@ -11,15 +11,15 @@ window.LESSONS['e5-0-1'] = {
     },
     {
       say: 'الأول نفهم الأساس. || السنة اللي بنعيشها اسمها year. || والسنة فيها اتناشر شهر، والشهر اسمه month. وكل شهر له اسم بالإنجليزي، وده اللي هنتعلمه.',
-      show: { type: 'lines', head: 'The year', lines: ['<b>year</b> = سنة', '12 <b>months</b> in a year', '<b>month</b> = شهر'] },
+      show: { type: 'lines', pics: ['pics/calendar.png', '', ''], head: 'The year', lines: ['<b>year</b> = سنة', '12 <b>months</b> in a year', '<b>month</b> = شهر'] },
     },
     {
       say: 'نبدأ بأول ست شهور. كل شهر هقوله وانت كرر ورايا. || January، يعني يناير. January. || February، يعني فبراير. February. || March، يعني مارس. March. || April، يعني أبريل. April. || May، يعني مايو. May. || June، يعني يونيو. June.',
-      show: { type: 'grid', title: 'Months of the Year', head: ['English', 'العربية'], rows: [['January', 'يناير'], ['February', 'فبراير'], ['March', 'مارس'], ['April', 'أبريل'], ['May', 'مايو'], ['June', 'يونيو']], caption: 'الشهور من ١ إلى ٦' },
+      show: { type: 'grid', pics: ['pics/calendar.png', '', '', '', '', ''], title: 'Months of the Year', head: ['English', 'العربية'], rows: [['January', 'يناير'], ['February', 'فبراير'], ['March', 'مارس'], ['April', 'أبريل'], ['May', 'مايو'], ['June', 'يونيو']], caption: 'الشهور من ١ إلى ٦' },
     },
     {
       say: 'وبعدين بقية الشهور. كمّل معايا. || July، يعني يوليو. July. || August، يعني أغسطس. August. || September، يعني سبتمبر. September. || October، يعني أكتوبر. October. || November، يعني نوفمبر. November. || وآخر شهر December، يعني ديسمبر. December.',
-      show: { type: 'grid', title: 'Months of the Year', head: ['English', 'العربية'], rows: [['July', 'يوليو'], ['August', 'أغسطس'], ['September', 'سبتمبر'], ['October', 'أكتوبر'], ['November', 'نوفمبر'], ['December', 'ديسمبر']], caption: 'الشهور من ٧ إلى ١٢' },
+      show: { type: 'grid', pics: ['pics/calendar.png', '', '', '', '', ''], title: 'Months of the Year', head: ['English', 'العربية'], rows: [['July', 'يوليو'], ['August', 'أغسطس'], ['September', 'سبتمبر'], ['October', 'أكتوبر'], ['November', 'نوفمبر'], ['December', 'ديسمبر']], caption: 'الشهور من ٧ إلى ١٢' },
     },
     {
       say: 'دورك. أي شهر بييجي بعد March؟ اختار الإجابة بالريموت.',
@@ -31,15 +31,15 @@ window.LESSONS['e5-0-1'] = {
     },
     {
       say: 'دلوقتي كلمات الوقت اللي في الكتاب. || Month يعني شهر. وYear يعني سنة. || Calendar يعني تقويم، يعني الورقة اللي مكتوب عليها الأيام والشهور. || Date يعني تاريخ. || Early يعني بدري، وlate يعني متأخر، وهما عكس بعض. || وago يعني من زمان، يعني قبل كده.',
-      show: { type: 'grid', title: 'Time Words', head: ['English', 'العربية'], rows: [['month / year', 'شهر / سنة'], ['calendar', 'تقويم'], ['date', 'تاريخ'], ['early', 'مبكر'], ['late', 'متأخر'], ['ago', 'منذ']], caption: 'كلمات الوقت' },
+      show: { type: 'grid', pics: ['pics/calendar.png', '', '', 'pics/sunrise.png', 'pics/alarm-clock.png', 'pics/hourglass.png'], title: 'Time Words', head: ['English', 'العربية'], rows: [['month / year', 'شهر / سنة'], ['calendar', 'تقويم'], ['date', 'تاريخ'], ['early', 'مبكر'], ['late', 'متأخر'], ['ago', 'منذ']], caption: 'كلمات الوقت' },
     },
     {
       say: 'نستخدمها في جمل. || I woke up early today. يعني صحيت بدري النهارده. || He came late. يعني هو جه متأخر. || I saw him two days ago. يعني شفته من يومين. كلمة ago بنحطها في آخر الجملة بعد المدة.',
-      show: { type: 'lines', head: 'Examples', lines: ['I woke up <b>early</b> today.', 'He came <b>late</b>.', 'I saw him two days <b>ago</b>.'] },
+      show: { type: 'lines', pics: ['pics/sunrise.png', 'pics/alarm-clock.png', 'pics/hourglass.png'], head: 'Examples', lines: ['I woke up <b>early</b> today.', 'He came <b>late</b>.', 'I saw him two days <b>ago</b>.'] },
     },
     {
       say: 'تعالى بقى للأرقام الكبيرة. بنبدأ بالمئات. || one hundred يعني مية. || two hundred يعني ميتين. || three hundred يعني تلتمية. || five hundred يعني خمسمية. || nine hundred يعني تسعمية. || وبعد تسعمية بييجي one thousand، يعني ألف.',
-      show: { type: 'grid', title: 'Numbers', head: ['Number', 'Say it'], rows: [['100', 'one hundred'], ['200', 'two hundred'], ['300', 'three hundred'], ['500', 'five hundred'], ['900', 'nine hundred'], ['1000', 'one thousand']], caption: 'hundred بدون s' },
+      show: { type: 'grid', pics: ['pics/hundred.png', '', '', '', '', ''], title: 'Numbers', head: ['Number', 'Say it'], rows: [['100', 'one hundred'], ['200', 'two hundred'], ['300', 'three hundred'], ['500', 'five hundred'], ['900', 'nine hundred'], ['1000', 'one thousand']], caption: 'hundred بدون s' },
     },
     {
       say: 'لاحظ حاجة مهمة جداً. كلمة hundred ما بنحطش عليها s لما قبلها رقم. || يعني نقول two hundred، مش two hundreds. || ونقول five hundred، مش five hundreds. وده بيجي كتير في الاختبار.',

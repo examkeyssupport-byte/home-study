@@ -15,7 +15,7 @@ window.LESSONS['e5-1-1'] = {
     },
     {
       say: 'نبدأ بالكلمات الحلوة، الإيجابية. كرر كل كلمة ورايا. || amazing يعني مذهل. amazing. || excellent يعني ممتاز. excellent. || wonderful يعني رائع. wonderful. || lovely يعني جميل ولطيف. lovely. || special يعني مميز. special.',
-      show: { type: 'grid', title: 'Good words', head: ['English', 'العربية'], rows: [['amazing', 'مذهل'], ['excellent', 'ممتاز'], ['wonderful', 'رائع'], ['lovely', 'جميل / لطيف'], ['special', 'مميز']], caption: 'كلمات إيجابية' },
+      show: { type: 'grid', pics: ['pics/star-struck.png', 'pics/hundred.png', 'pics/glowing-star.png', 'pics/red-heart.png', 'pics/sparkles.png'], title: 'Good words', head: ['English', 'العربية'], rows: [['amazing', 'مذهل'], ['excellent', 'ممتاز'], ['wonderful', 'رائع'], ['lovely', 'جميل / لطيف'], ['special', 'مميز']], caption: 'كلمات إيجابية' },
     },
     {
       say: 'دورك. أنهي كلمة معناها رائع؟ اختار الإجابة بالريموت.',
@@ -23,15 +23,15 @@ window.LESSONS['e5-1-1'] = {
     },
     {
       say: 'الإجابة wonderful. || wonderful معناها رائع، وهي كلمة حلوة. || أما horrible فمعناها فظيع، يعني عكسها. وmessy معناها مبهدل. خلي بالك من الفرق.',
-      show: { type: 'lines', head: 'Answer', lines: ['<b>wonderful</b> = رائع ✔', 'horrible = فظيع (سلبية)', 'messy = فوضوي'] },
+      show: { type: 'lines', pics: ['pics/glowing-star.png', 'pics/nauseated.png', 'pics/tornado.png'], head: 'Answer', lines: ['<b>wonderful</b> = رائع ✔', 'horrible = فظيع (سلبية)', 'messy = فوضوي'] },
     },
     {
       say: 'تعالى نتعلم كلمات تانية بتوصف الشخصية. || friendly يعني ودود، يعني بيحب الناس. friendly. || funny يعني مضحك. funny. || lucky يعني محظوظ. lucky. || popular يعني مشهور ومحبوب. popular. || important يعني مهم. important. || interesting يعني ممتع ومشوق. interesting.',
-      show: { type: 'grid', title: 'More words', head: ['English', 'العربية'], rows: [['friendly', 'ودود'], ['funny', 'مضحك'], ['lucky', 'محظوظ'], ['popular', 'مشهور / محبوب'], ['important', 'مهم'], ['interesting', 'ممتع / مشوق']], caption: 'كلمات الوصف' },
+      show: { type: 'grid', pics: ['pics/smile.png', 'pics/laugh.png', 'pics/clover.png', 'pics/partying.png', 'pics/exclamation.png', 'pics/thinking.png'], title: 'More words', head: ['English', 'العربية'], rows: [['friendly', 'ودود'], ['funny', 'مضحك'], ['lucky', 'محظوظ'], ['popular', 'مشهور / محبوب'], ['important', 'مهم'], ['interesting', 'ممتع / مشوق']], caption: 'كلمات الوصف' },
     },
     {
       say: 'وفيه كلمات تانية مهمة من الوحدة. || noisy يعني مزعج وصوته عالي. وعكسها quiet. || messy يعني مبهدل وغير منظم. || horrible يعني فظيع. || excited يعني متحمس. || enjoy يعني بتستمتع. || وride يعني تركب.',
-      show: { type: 'grid', title: 'More vocabulary', head: ['English', 'العربية'], rows: [['noisy', 'مزعج'], ['messy', 'فوضوي'], ['horrible', 'فظيع'], ['excited', 'متحمس'], ['enjoy', 'يستمتع'], ['ride', 'يركب']], caption: 'كلمات إضافية' },
+      show: { type: 'grid', pics: ['pics/loudspeaker.png', 'pics/tornado.png', 'pics/nauseated.png', 'pics/partying.png', 'pics/smile.png', 'pics/roller-coaster.png'], title: 'More vocabulary', head: ['English', 'العربية'], rows: [['noisy', 'مزعج'], ['messy', 'فوضوي'], ['horrible', 'فظيع'], ['excited', 'متحمس'], ['enjoy', 'يستمتع'], ['ride', 'يركب']], caption: 'كلمات إضافية' },
     },
     {
       say: 'دورك تاني. اختار الكلمة المناسبة للجملة. اختار الإجابة بالريموت.',
@@ -39,15 +39,15 @@ window.LESSONS['e5-1-1'] = {
     },
     {
       say: 'الإجابة funny. || لأنه بيخلينا نضحك، يعني هو مضحك. || funny معناها مضحك. وكل ما تسمع laugh، فكر في funny.',
-      show: { type: 'lines', head: 'Answer', lines: ['makes us laugh ← بيضحكنا', 'يبقى هو <b>funny</b>', 'funny = مضحك'] },
+      show: { type: 'lines', pics: ['pics/laugh.png', '', ''], head: 'Answer', lines: ['makes us laugh ← بيضحكنا', 'يبقى هو <b>funny</b>', 'funny = مضحك'] },
     },
     {
       say: 'دلوقتي حاجة ذكية جداً هتوفر عليك كلمات كتير. حرف un. || لما نحط un في أول الكلمة، بتتحول لعكسها. || مثلاً friendly يعني ودود. ولما نحط un بتبقى unfriendly، يعني غير ودود. || ونفس الشيء مع kind، يعني طيب، بتبقى unkind، يعني قاسي.',
-      show: { type: 'lines', head: 'un- = the opposite', lines: ['<b>un</b> + كلمة = عكسها', 'friendly → <b>un</b>friendly', 'kind → <b>un</b>kind'] },
+      show: { type: 'lines', pics: ['', 'pics/angry.png', ''], head: 'un- = the opposite', lines: ['<b>un</b> + كلمة = عكسها', 'friendly → <b>un</b>friendly', 'kind → <b>un</b>kind'] },
     },
     {
       say: 'وفيه أمثلة تانية من الكتاب، واحفظها كويس. || lucky يعني محظوظ، وunlucky يعني سيئ الحظ. || tidy يعني مرتب، وuntidy يعني مش مرتب. || usual يعني معتاد، وunusual يعني غير معتاد.',
-      show: { type: 'grid', title: 'un- = the opposite', head: ['Word', 'Opposite'], rows: [['lucky', 'unlucky'], ['tidy', 'untidy'], ['usual', 'unusual']], caption: 'un + word = العكس' },
+      show: { type: 'grid', pics: ['pics/clover.png', 'pics/broom.png', ''], title: 'un- = the opposite', head: ['Word', 'Opposite'], rows: [['lucky', 'unlucky'], ['tidy', 'untidy'], ['usual', 'unusual']], caption: 'un + word = العكس' },
     },
     {
       say: 'دورك. إيه عكس كلمة friendly؟ اختار الإجابة بالريموت.',
@@ -59,11 +59,11 @@ window.LESSONS['e5-1-1'] = {
     },
     {
       say: 'نستخدم الكلمات في جمل قصيرة. كرر الجمل بصوتك. || The game night was amazing. يعني ليلة الألعاب كانت مذهلة. || Everyone is friendly. يعني الكل ودود. || The room is messy. يعني الأوضة مبهدلة. || I enjoy the rides. يعني بستمتع بالألعاب.',
-      show: { type: 'lines', head: 'Examples', lines: ['The game night was <b>amazing</b>.', 'Everyone is <b>friendly</b>.', 'The room is <b>messy</b>.', 'I <b>enjoy</b> the rides.'] },
+      show: { type: 'lines', pics: ['pics/star-struck.png', 'pics/smile.png', 'pics/tornado.png', 'pics/roller-coaster.png'], head: 'Examples', lines: ['The game night was <b>amazing</b>.', 'Everyone is <b>friendly</b>.', 'The room is <b>messy</b>.', 'I <b>enjoy</b> the rides.'] },
     },
     {
       say: 'نلخّص الدرس. || الكلمات الإيجابية زي amazing وwonderful. || كلمات الوصف زي friendly وfunny. || وحرف un بيقلب الكلمة للعكس. || زي unkind وunlucky وuntidy. برافو عليك! يلا بينا على الاختبار.',
-      show: { type: 'lines', head: 'Summary', lines: ['✔ amazing – excellent – wonderful', '✔ friendly – funny – lucky', '✔ un + word = opposite', '✔ unkind – unlucky – untidy'] },
+      show: { type: 'lines', pics: ['pics/star-struck.png', 'pics/smile.png', '', 'pics/angry.png'], head: 'Summary', lines: ['✔ amazing – excellent – wonderful', '✔ friendly – funny – lucky', '✔ un + word = opposite', '✔ unkind – unlucky – untidy'] },
     },
   ],
   quiz: [

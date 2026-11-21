@@ -11,11 +11,11 @@ window.LESSONS['e7-2-2'] = {
     },
     {
       say: 'أول كلمة سؤال: What. بنسأل بيها عن يوم معيّن أو تاريخ أو وقت. || What day is today؟ يعني النهارده إيه؟ || What is the date tomorrow؟ يعني تاريخ بكره إيه؟ || والإجابة: It\'s January twentieth. وكلمة It\'s دي اختصار it is. || وكمان: What day is your visit to the museum؟ والإجابة: Our visit is on Thursday.',
-      show: { type: 'lines', head: 'What', lines: ['<b>What</b> day is today?', '<b>What</b> is the date tomorrow?', 'It\'s January 20th. (it\'s = it is)', 'Our visit is on Thursday.'] },
+      show: { type: 'lines', pics: ['pics/calendar.png', '', '', ''], head: 'What', lines: ['<b>What</b> day is today?', '<b>What</b> is the date tomorrow?', 'It\'s January 20th. (it\'s = it is)', 'Our visit is on Thursday.'] },
     },
     {
       say: 'تاني كلمة سؤال: When. بنسأل بيها عن وقت أعم، زي الشهر أو الفصل. || When is your vacation؟ يعني إمتى إجازتك؟ || والإجابة: Our vacation is in May. || وكمان: When are their football matches؟ || والإجابة: Their matches are in the winter.',
-      show: { type: 'lines', head: 'When', lines: ['<b>When</b> is your vacation?', 'Our vacation is <b>in</b> May.', '<b>When</b> are their football matches?', 'Their matches are <b>in</b> the winter.'] },
+      show: { type: 'lines', pics: ['pics/beach.png', '', 'pics/soccer.png', 'pics/snowflake.png'], head: 'When', lines: ['<b>When</b> is your vacation?', 'Our vacation is <b>in</b> May.', '<b>When</b> are their football matches?', 'Their matches are <b>in</b> the winter.'] },
     },
     {
       say: 'دورك. المدرس قال لك: blank is your vacation؟ والإجابة: Our vacation is in May. نكمّل بأنهي كلمة سؤال؟ اختار الإجابة بالريموت.',
@@ -27,7 +27,7 @@ window.LESSONS['e7-2-2'] = {
     },
     {
       say: 'تالت كلمة: How old. دي للسن. || How old are you؟ يعني عندك كام سنة؟ || والإجابة: I\'m fifteen. || وبنسأل كمان عن حاجة، زي مبنى: How old is the building؟ || والإجابة: It is one hundred and fifty years old.',
-      show: { type: 'lines', head: 'How old', lines: ['<b>How old</b> are you?', 'I\'m fifteen.', '<b>How old</b> is the building?', 'It is 150 years old.'] },
+      show: { type: 'lines', pics: ['pics/birthday-cake.png', '', 'pics/old-building.png', ''], head: 'How old', lines: ['<b>How old</b> are you?', 'I\'m fifteen.', '<b>How old</b> is the building?', 'It is 150 years old.'] },
     },
     {
       say: 'دلوقتي أهم قاعدة في الدرس: in وon. || بنستعمل in مع الشهور. زي in September. || وبنستعمل in كمان مع الفصول، زي in the winter. || بس مع الأيام بنستعمل on. زي on Monday. || ومع التواريخ كمان on. زي on September twenty-first.',
@@ -35,7 +35,7 @@ window.LESSONS['e7-2-2'] = {
     },
     {
       say: 'خلينا نشوف نفس الاختبار بطريقتين. || السؤال الأول: When is your final test؟ والإجابة: Our final test is in September. بالشهر، يبقى in. || السؤال التاني: What day is your final test؟ والإجابة: Our final test is on September twenty-first. بالتاريخ، يبقى on. || وكمان الحاجة اللي بتحصل كل أسبوع: What day do you play football؟ On Mondays. || وكمان: English classes are on Monday and Wednesday.',
-      show: { type: 'lines', head: 'Examples', lines: ['<b>When</b> ...? Our final test is <b>in</b> September.', '<b>What day</b> ...? Our final test is <b>on</b> September 21st.', 'What day do you play football? <b>On</b> Mondays.', 'English classes are <b>on</b> Monday and Wednesday.'] },
+      show: { type: 'lines', pics: ['pics/memo.png', '', 'pics/soccer.png', 'pics/books.png'], head: 'Examples', lines: ['<b>When</b> ...? Our final test is <b>in</b> September.', '<b>What day</b> ...? Our final test is <b>on</b> September 21st.', 'What day do you play football? <b>On</b> Mondays.', 'English classes are <b>on</b> Monday and Wednesday.'] },
     },
     {
       say: 'دورك تاني. كمّل الجملة: Our final test is blank September twenty-first. اختار الإجابة بالريموت.',

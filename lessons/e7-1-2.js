@@ -11,7 +11,7 @@ window.LESSONS['e7-1-2'] = {
     },
     {
       say: 'الفعل be معناه يكون، يعني بيربط بين الشخص وحاجة عنه، زي: أنا طالب. || بس هو مش دايمًا زي ما هو. بيتغير حسب الشخص. || مع I بنقول am. I am. || مع you بنقول are. You are. || ومع he وshe بنقول is. He is. She is.',
-      show: { type: 'grid', title: 'Verb be — singular (مفرد)', head: ['الضمير', 'الفعل', 'مثال'], rows: [['I', '<b>am</b>', 'I am John.'], ['You', '<b>are</b>', 'You are Sue.'], ['He', '<b>is</b>', 'He is Bill.'], ['She', '<b>is</b>', 'She is Mary.']], caption: 'be = يكون' },
+      show: { type: 'grid', pics: ['pics/me.png', 'pics/you.png', 'pics/man.png', 'pics/woman.png'], title: 'Verb be — singular (مفرد)', head: ['الضمير', 'الفعل', 'مثال'], rows: [['I', '<b>am</b>', 'I am John.'], ['You', '<b>are</b>', 'You are Sue.'], ['He', '<b>is</b>', 'He is Bill.'], ['She', '<b>is</b>', 'She is Mary.']], caption: 'be = يكون' },
     },
     {
       say: 'دورك. كمّل الجملة. I blank a student. اختار الإجابة بالريموت.',
@@ -19,11 +19,11 @@ window.LESSONS['e7-1-2'] = {
     },
     {
       say: 'الإجابة am. || لأن الضمير I بيمشي مع am بس. || يعني نقول: I am a student. || ومش بنقول I is ولا I are أبدًا.',
-      show: { type: 'lines', head: 'الإجابة', lines: ['I + <b>am</b>', 'I <b>am</b> a student.', 'ممنوع: I is / I are'] },
+      show: { type: 'lines', pics: ['', 'pics/student.png', ''], head: 'الإجابة', lines: ['I + <b>am</b>', 'I <b>am</b> a student.', 'ممنوع: I is / I are'] },
     },
     {
       say: 'طيب لو بنتكلم عن أكتر من واحد، يعني جمع؟ الكتاب بيقول: مع we بنقول are. We are. || ومع you، حتى لو كتير، are. You are. || ومع they، يعني هما، are. They are. || وخد بالك: Matt and Ben يعني اتنين، يبقى they، ونقول Matt and Ben are classmates.',
-      show: { type: 'grid', title: 'Verb be — plural (جمع)', head: ['الضمير', 'الفعل', 'مثال'], rows: [['We', '<b>are</b>', 'We are friends.'], ['You', '<b>are</b>', 'You are friends.'], ['They', '<b>are</b>', 'They are friends.']], caption: 'Matt and Ben = they → <b>are</b>' },
+      show: { type: 'grid', pics: ['pics/students.png', 'pics/you.png', ''], title: 'Verb be — plural (جمع)', head: ['الضمير', 'الفعل', 'مثال'], rows: [['We', '<b>are</b>', 'We are friends.'], ['You', '<b>are</b>', 'You are friends.'], ['They', '<b>are</b>', 'They are friends.']], caption: 'Matt and Ben = they → <b>are</b>' },
     },
     {
       say: 'ودلوقتي الاختصار، واسمه contraction. بنختصر الكلمتين في كلمة واحدة وبنحط علامة فوق اسمها apostrophe. || I am بتبقى I\'m. || you are بتبقى you\'re. || he is بتبقى he\'s، وshe is بتبقى she\'s. || وwe are بتبقى we\'re، وthey are بتبقى they\'re.',
@@ -31,7 +31,7 @@ window.LESSONS['e7-1-2'] = {
     },
     {
       say: 'دلوقتي أمثلة من تمارين الكتاب. || Mr. Albadri شخص واحد، يبقى بنقول: Mr. Albadri is the principal. || وMatt and Ben اتنين، يبقى: Matt and Ben are classmates. || ولو بتقول لصاحبك: You are my best friend. || وأخيرًا، Mr. and Mrs. Johnson اتنين، يبقى: Mr. and Mrs. Johnson are married.',
-      show: { type: 'lines', head: 'Examples', lines: ['Mr. Albadri <b>is</b> the principal.', 'Matt and Ben <b>are</b> classmates.', 'You <b>are</b> my best friend.', 'Mr. and Mrs. Johnson <b>are</b> married.'] },
+      show: { type: 'lines', pics: ['pics/teacher.png', 'pics/students.png', 'pics/hug.png', 'pics/wedding.png'], head: 'Examples', lines: ['Mr. Albadri <b>is</b> the principal.', 'Matt and Ben <b>are</b> classmates.', 'You <b>are</b> my best friend.', 'Mr. and Mrs. Johnson <b>are</b> married.'] },
     },
     {
       say: 'دورك تاني. كمّل: Matt and Ben blank classmates. اختار الإجابة بالريموت.',
@@ -39,7 +39,7 @@ window.LESSONS['e7-1-2'] = {
     },
     {
       say: 'الإجابة are. || لأن Matt and Ben اتنين، يعني they. || ومع they بنستعمل are. || يبقى: Matt and Ben are classmates.',
-      show: { type: 'lines', head: 'الإجابة', lines: ['Matt and Ben = اثنان', 'اثنان = they', 'They + <b>are</b>', 'Matt and Ben <b>are</b> classmates.'] },
+      show: { type: 'lines', pics: ['pics/students.png', '', '', 'pics/students.png'], head: 'الإجابة', lines: ['Matt and Ben = اثنان', 'اثنان = they', 'They + <b>are</b>', 'Matt and Ben <b>are</b> classmates.'] },
     },
     {
       say: 'نيجي للجزء التاني: Possessive Adjectives. دي كلمات بتقول الحاجة دي بتاعة مين. || my يعني بتاعي: My name is Fatima. || your يعني بتاعك: Is your name Mona? || his يعني بتاعه، للولد: His name is John. || وher يعني بتاعها، للبنت: Her name is Mary.',
@@ -47,7 +47,7 @@ window.LESSONS['e7-1-2'] = {
     },
     {
       say: 'خد بالك: لو بتتكلم عن ولد استعمل his، ولو عن بنت استعمل her. || يعني: He\'s a teacher. His name is Mr. Farhat. || وكمان: I\'m a student. My name is Aisha. || وكمان مع الأسماء: Henry ولد، يبقى نقول His. This is Henry. His last name is Parker.',
-      show: { type: 'lines', head: 'his / her / my', lines: ['He\'s a teacher. <b>His</b> name is Mr. Farhat.', 'I\'m a student. <b>My</b> name is Aisha.', 'This is Henry. <b>His</b> last name is Parker.'] },
+      show: { type: 'lines', pics: ['pics/teacher.png', 'pics/student.png', 'pics/name-badge.png'], head: 'his / her / my', lines: ['He\'s a teacher. <b>His</b> name is Mr. Farhat.', 'I\'m a student. <b>My</b> name is Aisha.', 'This is Henry. <b>His</b> last name is Parker.'] },
     },
     {
       say: 'آخر سؤال. كمّل: She is a student. blank name is Aisha. اختار الإجابة بالريموت.',
@@ -55,7 +55,7 @@ window.LESSONS['e7-1-2'] = {
     },
     {
       say: 'الإجابة Her. || لأن Aisha بنت، يعني she. || ومع البنت بنستعمل her. || أما his فللولد، وmy لما أتكلم عن نفسي.',
-      show: { type: 'lines', head: 'الإجابة', lines: ['Aisha = بنت = she', 'she → <b>her</b>', 'Her name is Aisha.'] },
+      show: { type: 'lines', pics: ['pics/woman.png', '', 'pics/name-badge.png'], head: 'الإجابة', lines: ['Aisha = بنت = she', 'she → <b>her</b>', 'Her name is Aisha.'] },
     },
     {
       say: 'نلخّص الدرس. || مع I نقول am. || ومع he وshe نقول is. || ومع you وwe وthey نقول are. || ولما نختصر نقول I\'m وhe\'s وthey\'re. || وقبل الاسم نستعمل my أو your أو his أو her. برافو عليك! يلا بينا على الاختبار.',

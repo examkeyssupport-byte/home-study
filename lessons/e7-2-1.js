@@ -15,11 +15,11 @@ window.LESSONS['e7-2-1'] = {
     },
     {
       say: 'نبدأ بأيام الأسبوع، وهما سبعة. الكتاب بيبدأهم من الأحد. || Sunday. الأحد. Sunday. || Monday. الاتنين. Monday. || Tuesday. التلات. Tuesday. || Wednesday. الأربع. وبتتنطق Wenzday، والـ d ما بتتقالش.',
-      show: { type: 'lines', head: 'Days of the week (1)', lines: ['<b>Sunday</b> = الأحد', '<b>Monday</b> = الاثنين', '<b>Tuesday</b> = الثلاثاء', '<b>Wednesday</b> = الأربعاء'] },
+      show: { type: 'lines', pics: ['pics/calendar.png', '', '', ''], head: 'Days of the week (1)', lines: ['<b>Sunday</b> = الأحد', '<b>Monday</b> = الاثنين', '<b>Tuesday</b> = الثلاثاء', '<b>Wednesday</b> = الأربعاء'] },
     },
     {
       say: 'نكمّل الأيام. || Thursday. الخميس. Thursday. || Friday. الجمعة. Friday. || Saturday. السبت. Saturday. || وخد بالك: الأيام في الإنجليزي بتبدأ دايمًا بحرف كبير. Capital letter.',
-      show: { type: 'lines', head: 'Days of the week (2)', lines: ['<b>Thursday</b> = الخميس', '<b>Friday</b> = الجمعة', '<b>Saturday</b> = السبت', 'الأيام تبدأ بحرف كبير'] },
+      show: { type: 'lines', pics: ['pics/calendar.png', 'pics/mosque.png', 'pics/calendar.png', ''], head: 'Days of the week (2)', lines: ['<b>Thursday</b> = الخميس', '<b>Friday</b> = الجمعة', '<b>Saturday</b> = السبت', 'الأيام تبدأ بحرف كبير'] },
     },
     {
       say: 'دورك. بعد يوم Monday بييجي أنهي يوم؟ اختار الإجابة بالريموت.',
@@ -31,11 +31,11 @@ window.LESSONS['e7-2-1'] = {
     },
     {
       say: 'دلوقتي شهور السنة، وهما اتناشر شهر. الستة الأولانيين. || January. يناير. || February. فبراير. || March. مارس. || April. أبريل. || May. مايو. || June. يونيو. وكل شهر بيبدأ بحرف كبير زي الأيام.',
-      show: { type: 'grid', title: 'Months of the year (1)', head: ['English', 'المعنى'], rows: [['January', 'يناير'], ['February', 'فبراير'], ['March', 'مارس'], ['April', 'أبريل'], ['May', 'مايو'], ['June', 'يونيو']] },
+      show: { type: 'grid', pics: ['pics/calendar.png', '', '', '', '', ''], title: 'Months of the year (1)', head: ['English', 'المعنى'], rows: [['January', 'يناير'], ['February', 'فبراير'], ['March', 'مارس'], ['April', 'أبريل'], ['May', 'مايو'], ['June', 'يونيو']] },
     },
     {
       say: 'والستة التانيين. || July. يوليو. || August. أغسطس. || September. سبتمبر. || October. أكتوبر. || November. نوفمبر. || December. ديسمبر. كرّر معايا الشهور كلها مرة تانية في دماغك.',
-      show: { type: 'grid', title: 'Months of the year (2)', head: ['English', 'المعنى'], rows: [['July', 'يوليو'], ['August', 'أغسطس'], ['September', 'سبتمبر'], ['October', 'أكتوبر'], ['November', 'نوفمبر'], ['December', 'ديسمبر']] },
+      show: { type: 'grid', pics: ['pics/calendar.png', '', '', '', '', ''], title: 'Months of the year (2)', head: ['English', 'المعنى'], rows: [['July', 'يوليو'], ['August', 'أغسطس'], ['September', 'سبتمبر'], ['October', 'أكتوبر'], ['November', 'نوفمبر'], ['December', 'ديسمبر']] },
     },
     {
       say: 'سؤال سريع. بعد شهر September بييجي أنهي شهر؟ اختار الإجابة بالريموت.',
@@ -47,15 +47,15 @@ window.LESSONS['e7-2-1'] = {
     },
     {
       say: 'دلوقتي الأرقام، وفيها نوعين. نوع للعدد العادي: one وtwo وthree. ونوع للترتيب، واسمه ordinal، يعني الأول والتاني والتالت. الكتاب بيحط الاتنين جنب بعض. || واحد. one. وfirst الأول. || اتنين. two. وsecond التاني. || تلاتة. three. وthird التالت. || أربعة. four. وfourth الرابع. || خمسة. five. وfifth الخامس. || ستة. six. وsixth السادس.',
-      show: { type: 'grid', title: 'Numbers 1–6', head: ['Number', 'Word', 'Ordinal', 'Word'], rows: [['1', 'one', '1st', 'first'], ['2', 'two', '2nd', 'second'], ['3', 'three', '3rd', 'third'], ['4', 'four', '4th', 'fourth'], ['5', 'five', '5th', 'fifth'], ['6', 'six', '6th', 'sixth']] },
+      show: { type: 'grid', pics: ['pics/num-1.png', 'pics/num-2.png', 'pics/num-3.png', 'pics/num-4.png', 'pics/num-5.png', 'pics/num-6.png'], title: 'Numbers 1–6', head: ['Number', 'Word', 'Ordinal', 'Word'], rows: [['1', 'one', '1st', 'first'], ['2', 'two', '2nd', 'second'], ['3', 'three', '3rd', 'third'], ['4', 'four', '4th', 'fourth'], ['5', 'five', '5th', 'fifth'], ['6', 'six', '6th', 'sixth']] },
     },
     {
       say: 'نكمّل. || seven وseventh. || eight وeighth. || nine وninth. خد بالك: nine بتفقد حرف e في ninth. || ten وtenth. || eleven وeleventh. || twelve وtwelfth. دي بتتغير: الحرف v بيبقى f.',
-      show: { type: 'grid', title: 'Numbers 7–12', head: ['Number', 'Word', 'Ordinal', 'Word'], rows: [['7', 'seven', '7th', 'seventh'], ['8', 'eight', '8th', 'eighth'], ['9', 'nine', '9th', 'ninth'], ['10', 'ten', '10th', 'tenth'], ['11', 'eleven', '11th', 'eleventh'], ['12', 'twelve', '12th', 'twelfth']] },
+      show: { type: 'grid', pics: ['pics/num-7.png', 'pics/num-8.png', 'pics/num-9.png', 'pics/num-10.png', 'pics/numbers.png', 'pics/numbers.png'], title: 'Numbers 7–12', head: ['Number', 'Word', 'Ordinal', 'Word'], rows: [['7', 'seven', '7th', 'seventh'], ['8', 'eight', '8th', 'eighth'], ['9', 'nine', '9th', 'ninth'], ['10', 'ten', '10th', 'tenth'], ['11', 'eleven', '11th', 'eleventh'], ['12', 'twelve', '12th', 'twelfth']] },
     },
     {
       say: 'وبعد اتناشر الأرقام بتبقى سهلة. || من thirteen لـ nineteen كلهم بيخلصوا بـ teen. || بعد كده العشرات: twenty وthirty. || وforty وfifty. خد بالك: forty من غير حرف u. || وبنقول one hundred للمية، وone thousand للألف.',
-      show: { type: 'lines', head: 'Bigger numbers', lines: ['13 <b>thirteen</b> ... 19 <b>nineteen</b>', '20 <b>twenty</b> ، 30 <b>thirty</b>', '40 <b>forty</b> ، 50 <b>fifty</b>', '100 <b>one hundred</b> ، 1000 <b>one thousand</b>'] },
+      show: { type: 'lines', pics: ['pics/numbers.png', '', '', 'pics/hundred.png'], head: 'Bigger numbers', lines: ['13 <b>thirteen</b> ... 19 <b>nineteen</b>', '20 <b>twenty</b> ، 30 <b>thirty</b>', '40 <b>forty</b> ، 50 <b>fifty</b>', '100 <b>one hundred</b> ، 1000 <b>one thousand</b>'] },
     },
     {
       say: 'آخر سؤال. شهر July هو الشهر رقم كام في السنة؟ لو عدّيت الشهور من أول January هتعرف. وعايزين الإجابة بكلمة الترتيب. اختار الإجابة بالريموت.',
@@ -63,7 +63,7 @@ window.LESSONS['e7-2-1'] = {
     },
     {
       say: 'الإجابة seventh. || January، February، March، April، May، June، ودي ستة. وJuly هو السابع. || ولأن ده ترتيب مش عدد، نقول seventh. || وseven عدد عادي، وseventeen يعني سبعتاشر.',
-      show: { type: 'lines', head: 'الإجابة', lines: ['July = الشهر السابع', 'الترتيب ← <b>seventh</b>', 'seven = عدد ، seventeen = 17'] },
+      show: { type: 'lines', pics: ['pics/calendar.png', '', ''], head: 'الإجابة', lines: ['July = الشهر السابع', 'الترتيب ← <b>seventh</b>', 'seven = عدد ، seventeen = 17'] },
     },
     {
       say: 'نلخّص الدرس. || أيام الأسبوع سبعة، من Sunday لـ Saturday. || شهور السنة اتناشر، من January لـ December. || الأيام والشهور بتبدأ بحرف كبير. || one وtwo وthree عدد، وfirst وsecond وthird ترتيب. وtwelfth يعني الثاني عشر. برافو عليك! يلا بينا على الاختبار.',

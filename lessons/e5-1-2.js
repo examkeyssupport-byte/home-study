@@ -11,7 +11,7 @@ window.LESSONS['e5-1-2'] = {
     },
     {
       say: 'نبدأ بالمضارع البسيط. بنستخدمه للعادات، يعني الحاجات اللي بنعملها كتير. || مثلاً: I go to the youth center every day. يعني أنا بروح مركز الشباب كل يوم. || وكلمات زي every day وusually بتدل على المضارع. || وكمان: She paints wonderful pictures. يعني هي بترسم صور رائعة.',
-      show: { type: 'lines', head: 'Simple Present', lines: ['عادة ← <b>Present</b>', 'I <b>go</b> to the youth center every day.', 'every day – usually', 'She <b>paints</b> wonderful pictures.'] },
+      show: { type: 'lines', pics: ['', '', 'pics/calendar.png', 'pics/artist-palette.png'], head: 'Simple Present', lines: ['عادة ← <b>Present</b>', 'I <b>go</b> to the youth center every day.', 'every day – usually', 'She <b>paints</b> wonderful pictures.'] },
     },
     {
       say: 'لاحظ حاجة مهمة جداً. || مع I وyou وwe وthey بنكتب الفعل زي ما هو. || لكن مع he وshe وit بنزود s على الفعل. || يعني she paints، مش she paint.',
@@ -23,19 +23,19 @@ window.LESSONS['e5-1-2'] = {
     },
     {
       say: 'الإجابة goes. || كلمة every day بتدل على المضارع. || وmy sister يعني she، فنزود es على go. || وماننساش، went دي ماضي، مش مضارع.',
-      show: { type: 'lines', head: 'Answer', lines: ['every day ← <b>Present</b>', 'my sister = she', 'go → <b>goes</b>'] },
+      show: { type: 'lines', pics: ['pics/calendar.png', '', ''], head: 'Answer', lines: ['every day ← <b>Present</b>', 'my sister = she', 'go → <b>goes</b>'] },
     },
     {
       say: 'والنفي في المضارع. بنستخدم don\'t مع I وyou وwe وthey. || وبنستخدم doesn\'t مع he وshe وit. || وبعدهم الفعل بدون s. || مثلاً: I don\'t watch movies on Mondays. يعني مابتفرجش على أفلام يوم الاتنين.',
-      show: { type: 'lines', head: 'Present negative', lines: ['I / you / we / they → <b>don\'t</b>', 'he / she / it → <b>doesn\'t</b>', 'don\'t / doesn\'t + <b>base verb</b>', 'I <b>don\'t watch</b> movies on Mondays.'] },
+      show: { type: 'lines', pics: ['', '', '', 'pics/clapper.png'], head: 'Present negative', lines: ['I / you / we / they → <b>don\'t</b>', 'he / she / it → <b>doesn\'t</b>', 'don\'t / doesn\'t + <b>base verb</b>', 'I <b>don\'t watch</b> movies on Mondays.'] },
     },
     {
       say: 'دلوقتي الماضي البسيط. بنستخدمه للحاجة اللي حصلت وخلصت. || بنزود ed على الفعل العادي. || مثلاً: I loved the game on Saturday. يعني حبيت اللعبة يوم السبت. || وكمان: She painted an amazing picture yesterday. يعني رسمت صورة مذهلة إمبارح. || وكلمات زي yesterday وlast week وago بتدل على الماضي.',
-      show: { type: 'lines', head: 'Simple Past', lines: ['حدث خلص ← <b>Past</b> (+ ed)', 'I <b>loved</b> the game on Saturday.', 'She <b>painted</b> an amazing picture yesterday.', 'yesterday – last week – ago'] },
+      show: { type: 'lines', pics: ['', 'pics/video-game.png', 'pics/artist-palette.png', 'pics/calendar.png'], head: 'Simple Past', lines: ['حدث خلص ← <b>Past</b> (+ ed)', 'I <b>loved</b> the game on Saturday.', 'She <b>painted</b> an amazing picture yesterday.', 'yesterday – last week – ago'] },
     },
     {
       say: 'وفيه أفعال شاذة، مابنزودش عليها ed، بل بتغيّر شكلها كله. لازم تحفظها. || go بتبقى went. || win بتبقى won. || have بتبقى had. || do بتبقى did.',
-      show: { type: 'grid', title: 'Irregular verbs', head: ['Present', 'Past'], rows: [['go', 'went'], ['win', 'won'], ['have', 'had'], ['do', 'did']], caption: 'We won a lot of games.' },
+      show: { type: 'grid', pics: ['', 'pics/trophy.png', '', ''], title: 'Irregular verbs', head: ['Present', 'Past'], rows: [['go', 'went'], ['win', 'won'], ['have', 'had'], ['do', 'did']], caption: 'We won a lot of games.' },
     },
     {
       say: 'دورك تاني. اختار الإجابة بالريموت.',
