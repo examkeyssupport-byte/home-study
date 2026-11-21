@@ -194,8 +194,10 @@ function kidScreen(kid) {
   checkBadges(kid);
   app.innerHTML = `<div class="top"><h1>${k.name} — ${k.grade}</h1><button class="btn" id="back">رجوع ↩</button></div>
   ${walletHTML(kid, true)}
-  <div class="grid">${k.subjects.map((s) => { const n = s.units.reduce((a, u) => a + u.lessons.length, 0);
-    return `<button class="card" data-s="${s.id}"><span class="big">${s.icon}</span><b>${s.name}</b><span class="mute">${n ? ar(n) + ' درس' : 'قريبًا'}</span></button>`; }).join('')}</div>`;
+  ${(() => { const r = roundInfo(kid); const n = r.need.length; return n ? `<div class="wallet"><div class="line"><span class="lvl">🔄 الجولة: ${ar(r.done.size)} من ${ar(n)} مواد</span><span class="mute">درس جديد من كل مادة، وبعدها جولة جديدة</span></div><div class="pbar money"><i style="width:${Math.round((100 * r.done.size) / n)}%"></i></div></div>` : ''; })()}
+  <div class="grid">${(() => { const r = roundInfo(kid); return k.subjects.map((s) => { const n = s.units.reduce((a, u) => a + u.lessons.length, 0);
+    const st = r.done.has(s.id) ? '<span class="tag ok">✅ خلصت في الجولة دي</span>' : r.need.includes(s.id) ? '<span class="tag mid">⏳ مستنياك</span>' : '';
+    return `<button class="card" data-s="${s.id}"><span class="big">${s.icon}</span><b>${s.name}</b><span class="mute">${n ? ar(n) + ' درس' : 'قريبًا'}</span>${st}</button>`; }).join(''); })()}</div>`;
   $('#back').onclick = () => go('');
   app.querySelectorAll('[data-s]').forEach((b) => (b.onclick = () => go(`subj/${kid}/${b.dataset.s}`)));
   focusFirst('[data-s]');
@@ -206,13 +208,15 @@ async function subjScreen(kid, sid) {
   const ids = s.units.flatMap((u) => u.lessons);
   await Promise.all(ids.map((id) => loadLesson(id).catch(() => null)));
   const nWrong = dueWrong(kid).filter((w) => ids.includes(w.split('#')[0])).length;
+  const roundDone = roundInfo(kid).done.has(sid);
   app.innerHTML = `<div class="top"><h1>${s.icon} ${s.name}</h1><button class="btn" id="back">رجوع ↩</button></div>
   ${s.units.length ? '' : '<p class="mute">الدروس هتنزل هنا قريب إن شاء الله.</p>'}
   <div class="row" style="margin-bottom:.6em"><button class="btn rev" id="tests">📝 اختبارات ${s.name} (كل الفصول)</button>${nWrong ? `<button class="btn rev" data-r="wrong">🔁 راجع أخطائي (${ar(nWrong)})</button>` : ''}</div>
   ${s.units.map((u, ui) => `<h2>${ar(u.name)}</h2>${u.lessons.map((id) => { const L = LESSONS[id]; if (!L) return ''; const st = lessonStats(kid, id);
     const w = st.watched == null ? '' : `<span class="tag ${st.watched >= 90 ? 'ok' : 'mid'}">شاهد ${ar(st.watched)}٪</span>`;
     const b = st.best == null ? '' : `<span class="tag ${st.best >= 80 ? 'ok' : st.best >= 50 ? 'mid' : 'bad'}">الاختبار ${ar(st.best)}٪</span>`;
-    return `<button class="btn lesson" data-l="${id}"><span>▶ ${ar(L.title)}</span><span>${w}${b}</span></button>`; }).join('')}`).join('')}`;
+    const lk = roundDone && (st.watched || 0) < 80 ? '<span class="tag">🔒 بعد باقي المواد</span>' : '';
+    return `<button class="btn lesson" data-l="${id}"><span>${lk ? '🔒' : '▶'} ${ar(L.title)}</span><span>${w}${b}${lk}</span></button>`; }).join('')}`).join('')}`;
   $('#back').onclick = () => go(`kid/${kid}`);
   app.querySelectorAll('[data-l]').forEach((b) => (b.onclick = () => go(`lesson/${kid}/${b.dataset.l}`)));
   app.querySelectorAll('[data-r]').forEach((b) => (b.onclick = () => go(`rev/${kid}/${sid}/${b.dataset.r}`)));
@@ -379,7 +383,36 @@ function renderShow(sh) {
   }
   return '';
 }
+// ---------- rounds (owner 11-21: variety) — a round = one NEW lesson from every subject that still has new lessons.
+// After a new lesson in a subject, its other new lessons lock until the round is complete. Re-watching + tests stay open.
+function roundInfo(kid) {
+  const k = kidOf(kid); const ev = store.get('ks-events', []).filter((e) => e.kid === kid && e.type === 'watch' && e.pct >= 80);
+  const first = {}; ev.forEach((e) => { if (!(e.lesson in first) || e.t < first[e.lesson]) first[e.lesson] = e.t; });
+  let start = store.get(`ks-round-${kid}`, 0);
+  const calc = () => {
+    const done = new Set(Object.keys(first).filter((l) => first[l] >= start).map((l) => subjectOf(kid, l)).filter(Boolean));
+    const need = k.subjects.filter((s) => done.has(s.id) || s.units.some((u) => u.lessons.some((l) => !(l in first)))).map((s) => s.id);
+    return { done, need };
+  };
+  let r = calc();
+  if (r.done.size && r.need.every((s) => r.done.has(s))) { start = Date.now(); store.set(`ks-round-${kid}`, start); r = calc(); r.fresh = true; }
+  return r;
+}
+// a NEW lesson of a subject already done in this round is locked
+function lessonLocked(kid, id) {
+  if ((lessonStats(kid, id).watched || 0) >= 80) return false;
+  const r = roundInfo(kid); return r.done.has(subjectOf(kid, id));
+}
+const subjName = (kid, sid) => (kidOf(kid).subjects.find((s) => s.id === sid) || {}).name || sid;
 async function lessonScreen(kid, id) {
+  if (lessonLocked(kid, id)) {
+    const r = roundInfo(kid); const left = r.need.filter((s) => !r.done.has(s)).map((s) => subjName(kid, s));
+    stopPlayer(); onBack = () => history.back();
+    app.innerHTML = `<div style="text-align:center"><h2>🔒 استنى شوية!</h2><p style="font-size:1.4em">خلّصت درس <b>${subjName(kid, subjectOf(kid, id))}</b> في الجولة دي.<br>ذاكر درس جديد من كل مادة من دول الأول:</p>
+    <p style="font-size:1.4em">${left.map((n) => `📘 ${n}`).join(' &nbsp; ')}</p><p class="mute">وبعدها المادة دي تتفتح تاني. (الدروس اللي اتفرجت عليها قبل كده والاختبارات مفتوحة دايمًا)</p>
+    <button class="btn" id="bk">🎒 المواد</button></div>`;
+    $('#bk').onclick = () => go(`kid/${kid}`); focusFirst('#bk'); return;
+  }
   let L; try { L = await loadLesson(id); } catch { return home(); }
   if (!(window.CUES && CUES[id])) await new Promise((ok) => { const s = document.createElement('script'); s.src = `audio/${id}/cues.js?v=${Date.now() / 3600000 | 0}`; s.onload = s.onerror = ok; document.head.appendChild(s); });
   stopPlayer(); onBack = () => history.back();
