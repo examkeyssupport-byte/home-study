@@ -381,6 +381,35 @@ function withPics(sh, html) {
   return html.replace(/^<div class="sv">/, `<div class="sv withpic${sh.type === 'grid' ? ' g' : ''}"><div class="txt">`).replace(/<\/div>$/, `</div>${box}</div>`);
 }
 function renderShow(sh) { return withPics(sh, renderShow0(sh)); }
+// 11-23 owner: a long table/text went below the screen → shrink the step until everything fits under the head
+function fitShow(stage) {
+  const sv = stage.querySelector('.sv'); if (!sv) return;
+  const box = sv.querySelector('.txt') || sv; const head = sv.querySelector('.head');
+  const over = () => {
+    const kids = [...box.children].filter((c) => !c.classList.contains('head') && getComputedStyle(c).position !== 'absolute');
+    if (!kids.length) return false;
+    const b = box.getBoundingClientRect(), cs = getComputedStyle(box);
+    const top = Math.max(b.top + parseFloat(cs.paddingTop), head && box === sv ? head.getBoundingClientRect().bottom + 4 : 0), bot = b.bottom - parseFloat(cs.paddingBottom);
+    const r = kids.map((c) => c.getBoundingClientRect());
+    return Math.min(...r.map((x) => x.top)) < top - 1 || Math.max(...r.map((x) => x.bottom)) > bot + 1;
+  };
+  let s = 1; sv.style.fontSize = '';
+  while (s > 0.45 && over()) { s -= 0.05; sv.style.fontSize = s + 'em'; }
+}
+// 11-23 owner: English sentences showed «...» at the wrong end (page is RTL) → mostly-Latin text runs left-to-right with Western digits
+const AR_D = '٠١٢٣٤٥٦٧٨٩';
+function fixDir(root) {
+  root.querySelectorAll('.q,.opts .btn,.ln,td,th,.aq,.aopt,.cap,.t1,.t2,#fb p,#fb div,#fb span,.why,.ow').forEach((el) => {
+    const t = el.textContent; const lat = (t.match(/[A-Za-z]/g) || []).length, arb = (t.match(/[؀-ۿ]/g) || []).length - (t.match(/[٠-٩]/g) || []).length;
+    if (lat > 2 && lat > arb * 2) {
+      el.setAttribute('dir', 'ltr'); if (el.matches('.q,.ln,.aq,.cap')) el.style.textAlign = el.closest('.sv') ? 'center' : 'left';
+      const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) if (/[٠-٩]/.test(n.nodeValue)) n.nodeValue = n.nodeValue.replace(/[٠-٩]/g, (d) => AR_D.indexOf(d));
+      // a gap «...» inside an English question → a clear blank line
+      if (el.matches('.q,.aq')) { const w2 = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let m; while ((m = w2.nextNode())) if (/\.{3}|…/.test(m.nodeValue)) m.nodeValue = m.nodeValue.replace(/\s*(\.{3,}|…)\s*/g, ' _____ ').trim(); }
+    }
+  });
+}
+new MutationObserver(() => { if (fixDir.p) return; fixDir.p = requestAnimationFrame(() => { fixDir.p = 0; fixDir(document.getElementById('app') || document.body); }); }).observe(document.body, { childList: true, subtree: true });
 function renderShow0(sh) {
   if (sh.type === 'title') return `<div class="sv"><div class="t1">${ar(sh.title)}</div><div class="t2">${ar(sh.sub || '')}</div></div>`;
   if (sh.type === 'lines') return `<div class="sv">${sh.head ? `<div class="head">${ar(sh.head)}</div>` : ''}${sh.lines.map((l) => `<div class="ln">${ar(l)}</div>`).join('')}</div>`;
@@ -450,7 +479,7 @@ async function lessonScreen(kid, id) {
   const stage = $('#stage');
   document.body.classList.add('play'); fit();
   function show(i) {
-    P.step = i; stage.innerHTML = renderShow(L.steps[i].show) + '';
+    P.step = i; stage.innerHTML = renderShow(L.steps[i].show) + ''; fixDir(stage); fitShow(stage); requestAnimationFrame(() => fitShow(stage));
     [...$('#bar').children].forEach((el, j) => { el.classList.toggle('done', j < i); el.firstChild.style.width = j < i ? '100%' : '0'; });
     audio.src = `audio/${id}/s${i + 1}.mp3`; audio.play().catch((e) => { if (e && e.name === 'NotAllowedError') overlay(); });
     $('#play').textContent = '⏸ إيقاف';
